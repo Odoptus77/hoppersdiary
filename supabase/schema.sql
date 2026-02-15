@@ -1,4 +1,4 @@
--- Hoppersdiary (MVP) schema + RLS
+-- Hoppersdiary (MVP) schema + RLS (idempotent)
 -- Apply in Supabase SQL Editor.
 
 -- Extensions
@@ -82,62 +82,94 @@ create index if not exists grounds_city_idx on public.grounds(city);
 create index if not exists reviews_ground_idx on public.reviews(ground_id);
 create index if not exists reviews_created_at_idx on public.reviews(created_at desc);
 
--- RLS
+-- RLS enable
 alter table public.admin_users enable row level security;
 alter table public.grounds enable row level security;
 alter table public.ground_suggestions enable row level security;
 alter table public.reviews enable row level security;
 
--- admin_users: admin can see/manage
-create policy if not exists "admin_users_admin_all" on public.admin_users
-for all using (public.is_admin()) with check (public.is_admin());
+-- Policies (Postgres has no CREATE POLICY IF NOT EXISTS, so we guard manually)
+DO $$
+BEGIN
+  -- admin_users
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='admin_users' AND policyname='admin_users_admin_all'
+  ) THEN
+    EXECUTE 'create policy "admin_users_admin_all" on public.admin_users for all using (public.is_admin()) with check (public.is_admin())';
+  END IF;
 
--- grounds
--- Guests can read published grounds
-create policy if not exists "grounds_public_read_published" on public.grounds
-for select using (published = true);
+  -- grounds: public read published
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='grounds' AND policyname='grounds_public_read_published'
+  ) THEN
+    EXECUTE 'create policy "grounds_public_read_published" on public.grounds for select using (published = true)';
+  END IF;
 
--- Admin can do anything
-create policy if not exists "grounds_admin_all" on public.grounds
-for all using (public.is_admin()) with check (public.is_admin());
+  -- grounds: admin all
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='grounds' AND policyname='grounds_admin_all'
+  ) THEN
+    EXECUTE 'create policy "grounds_admin_all" on public.grounds for all using (public.is_admin()) with check (public.is_admin())';
+  END IF;
 
--- suggestions
--- Authenticated users can create suggestions
-create policy if not exists "suggestions_auth_insert" on public.ground_suggestions
-for insert with check (auth.uid() = created_by);
+  -- suggestions: auth insert
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='ground_suggestions' AND policyname='suggestions_auth_insert'
+  ) THEN
+    EXECUTE 'create policy "suggestions_auth_insert" on public.ground_suggestions for insert with check (auth.uid() = created_by)';
+  END IF;
 
--- Users can read their own suggestions
-create policy if not exists "suggestions_own_read" on public.ground_suggestions
-for select using (auth.uid() = created_by);
+  -- suggestions: own read
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='ground_suggestions' AND policyname='suggestions_own_read'
+  ) THEN
+    EXECUTE 'create policy "suggestions_own_read" on public.ground_suggestions for select using (auth.uid() = created_by)';
+  END IF;
 
--- Admin can read/update all suggestions
-create policy if not exists "suggestions_admin_all" on public.ground_suggestions
-for all using (public.is_admin()) with check (public.is_admin());
+  -- suggestions: admin all
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='ground_suggestions' AND policyname='suggestions_admin_all'
+  ) THEN
+    EXECUTE 'create policy "suggestions_admin_all" on public.ground_suggestions for all using (public.is_admin()) with check (public.is_admin())';
+  END IF;
 
--- reviews
--- Guests can read reviews for published grounds
-create policy if not exists "reviews_public_read_if_ground_published" on public.reviews
-for select using (
-  exists (select 1 from public.grounds g where g.id = reviews.ground_id and g.published = true)
-);
+  -- reviews: public read if ground published
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='reviews' AND policyname='reviews_public_read_if_ground_published'
+  ) THEN
+    EXECUTE 'create policy "reviews_public_read_if_ground_published" on public.reviews for select using (exists (select 1 from public.grounds g where g.id = reviews.ground_id and g.published = true))';
+  END IF;
 
--- Authenticated users can create reviews (for published grounds)
-create policy if not exists "reviews_auth_insert" on public.reviews
-for insert with check (
-  auth.uid() = created_by
-  and exists (select 1 from public.grounds g where g.id = reviews.ground_id and g.published = true)
-);
+  -- reviews: auth insert (published grounds only)
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='reviews' AND policyname='reviews_auth_insert'
+  ) THEN
+    EXECUTE 'create policy "reviews_auth_insert" on public.reviews for insert with check (auth.uid() = created_by and exists (select 1 from public.grounds g where g.id = reviews.ground_id and g.published = true))';
+  END IF;
 
--- Users can update/delete their own reviews
-create policy if not exists "reviews_own_update" on public.reviews
-for update using (auth.uid() = created_by) with check (auth.uid() = created_by);
-create policy if not exists "reviews_own_delete" on public.reviews
-for delete using (auth.uid() = created_by);
+  -- reviews: own update
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='reviews' AND policyname='reviews_own_update'
+  ) THEN
+    EXECUTE 'create policy "reviews_own_update" on public.reviews for update using (auth.uid() = created_by) with check (auth.uid() = created_by)';
+  END IF;
 
--- Admin can moderate
-create policy if not exists "reviews_admin_all" on public.reviews
-for all using (public.is_admin()) with check (public.is_admin());
+  -- reviews: own delete
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='reviews' AND policyname='reviews_own_delete'
+  ) THEN
+    EXECUTE 'create policy "reviews_own_delete" on public.reviews for delete using (auth.uid() = created_by)';
+  END IF;
 
--- Seed note:
--- After you log in once, add yourself as admin:
--- insert into public.admin_users(user_id) values ('<YOUR_USER_ID>');
+  -- reviews: admin all
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='reviews' AND policyname='reviews_admin_all'
+  ) THEN
+    EXECUTE 'create policy "reviews_admin_all" on public.reviews for all using (public.is_admin()) with check (public.is_admin())';
+  END IF;
+END $$;
+
+-- Next step:
+-- 1) Log into /admin once and copy your User ID.
+-- 2) Run:
+--    insert into public.admin_users(user_id) values ('<YOUR_USER_ID>');
