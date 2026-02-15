@@ -91,11 +91,17 @@ alter table public.reviews enable row level security;
 -- Policies (Postgres has no CREATE POLICY IF NOT EXISTS, so we guard manually)
 DO $$
 BEGIN
-  -- admin_users
+  -- admin_users (avoid recursion: policies on admin_users must NOT call is_admin())
   IF NOT EXISTS (
-    SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='admin_users' AND policyname='admin_users_admin_all'
+    SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='admin_users' AND policyname='admin_users_self_select'
   ) THEN
-    EXECUTE 'create policy "admin_users_admin_all" on public.admin_users for all using (public.is_admin()) with check (public.is_admin())';
+    EXECUTE 'create policy "admin_users_self_select" on public.admin_users for select using (auth.uid() = user_id)';
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='admin_users' AND policyname='admin_users_self_insert'
+  ) THEN
+    EXECUTE 'create policy "admin_users_self_insert" on public.admin_users for insert with check (auth.uid() = user_id)';
   END IF;
 
   -- grounds: public read published
