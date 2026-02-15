@@ -1,23 +1,27 @@
-# Hoppersdiary (MVP)
+# Hoppersdiary
 
-DE-only community platform for groundhoppers.
+Community-Plattform für Groundhopper (DE-only MVP).
+
+## Stack (MVP)
+- Next.js (App Router) + TypeScript + Tailwind
+- Supabase (Auth Magic Link + Postgres + Storage)
+- Hosting: Vercel
 
 ## Local dev
-
 ```bash
 cd hoppersdiary
 npm run dev
 ```
 
-## MVP scope
-- Grounds directory (D-A-CH seed)
-- Ground detail + visit reviews (per match/visit)
-- Public read (guest mode)
-- Authenticated write
-- Suggest-a-ground + admin approval
-- Image uploads + basic moderation
+## MVP: Decisions
+- DE-only
+- D-A-CH seed
+- Guests can read
+- Write requires login
+- Grounds: user suggestions → admin approval
+- Reviews: per match/visit → aggregated ground summary
 
-## Stack
-- Next.js + TS + Tailwind
-- Supabase (Postgres + Auth + Storage)
-- Vercel deploy
+## Next steps
+- Supabase project + env vars
+- DB schema + RLS policies
+- Pages: Grounds list + Ground detail + Review form + Suggest ground
