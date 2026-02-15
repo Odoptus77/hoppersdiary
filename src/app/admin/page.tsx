@@ -72,7 +72,7 @@ export default function AdminPage() {
     <div className="space-y-8">
       <header className="space-y-3">
         <p className="text-xs uppercase tracking-[0.32em] text-black/60">Admin</p>
-        <h1 className="text-3xl font-semibold">Hoppersdiary Admin (v0)</h1>
+        <h1 className="text-3xl font-semibold">Hoppersdiary Admin</h1>
         <p className="max-w-2xl text-black/70">
           Hier testen wir Supabase Auth (Magic Link). Inhalte/Moderation kommen als nächstes.
         </p>
@@ -141,9 +141,22 @@ export default function AdminPage() {
             </button>
           </div>
           <p className="mt-3 text-sm text-black/70">
-            ✅ Supabase ist verbunden und Magic Link funktioniert. Als nächstes baue ich das echte Admin-Dashboard
-            (Ground-Vorschläge freischalten, Moderation, Seed-Daten).
+            ✅ Supabase ist verbunden und Magic Link funktioniert.
           </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <a
+              href="/admin/grounds"
+              className="rounded-xl bg-blue-900 px-4 py-2 text-sm font-semibold text-white"
+            >
+              Grounds bearbeiten
+            </a>
+            <a
+              href="/admin/suggestions"
+              className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+            >
+              Vorschläge prüfen
+            </a>
+          </div>
         </div>
       )}
     </div>
