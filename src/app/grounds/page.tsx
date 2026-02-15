@@ -1,10 +1,140 @@
+"use client";
+
+import Link from "next/link";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { useEffect, useMemo, useState } from "react";
+
+type Ground = {
+  id: string;
+  name: string;
+  club: string | null;
+  city: string | null;
+  country: string;
+  league: string | null;
+  capacity: number | null;
+  slug: string;
+};
+
 export default function GroundsPage() {
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+  const [items, setItems] = useState<Ground[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const [country, setCountry] = useState<string>("DE");
+  const [q, setQ] = useState<string>("");
+
+  useEffect(() => {
+    async function load() {
+      setLoading(true);
+      setError(null);
+
+      if (!supabase) {
+        setError("Supabase ist nicht konfiguriert.");
+        setLoading(false);
+        return;
+      }
+
+      let query = supabase
+        .from("grounds")
+        .select("id,name,club,city,country,league,capacity,slug")
+        .order("name", { ascending: true });
+
+      // Only published grounds are visible to guests anyway (RLS).
+      if (country) query = query.eq("country", country);
+      if (q.trim()) query = query.ilike("name", `%${q.trim()}%`);
+
+      const { data, error } = await query;
+      if (error) {
+        setError(error.message);
+        setItems([]);
+      } else {
+        setItems((data as Ground[]) ?? []);
+      }
+
+      setLoading(false);
+    }
+
+    load();
+  }, [supabase, country, q]);
+
   return (
-    <div className="space-y-4">
-      <h1 className="text-3xl font-semibold">Grounds</h1>
-      <p className="text-black/70">
-        Coming next: Liste + Filter (D-A-CH Seed) und ein rechter Bereich für die spätere Kartenansicht.
-      </p>
+    <div className="space-y-6">
+      <header className="space-y-2">
+        <h1 className="text-3xl font-semibold">Grounds</h1>
+        <p className="text-black/70">
+          MVP: D-A-CH Seed. Kartenansicht kommt in Phase 2 (Layout ist dafür vorbereitet).
+        </p>
+      </header>
+
+      <div className="grid gap-6 md:grid-cols-[1fr_360px]">
+        {/* Left: list */}
+        <div className="space-y-4">
+          <div className="flex flex-col gap-3 rounded-2xl border border-black/10 bg-white p-4 md:flex-row md:items-center">
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Suche nach Stadionname…"
+              className="w-full rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+            />
+            <select
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
+              className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+            >
+              <option value="DE">Deutschland</option>
+              <option value="AT">Österreich</option>
+              <option value="CH">Schweiz</option>
+            </select>
+            <Link
+              href="/suggest"
+              className="rounded-xl bg-blue-900 px-4 py-2 text-center text-sm font-semibold text-white"
+            >
+              + Vorschlagen
+            </Link>
+          </div>
+
+          {loading ? (
+            <div className="text-sm text-black/70">Lade…</div>
+          ) : error ? (
+            <div className="text-sm text-red-700">{error}</div>
+          ) : items.length === 0 ? (
+            <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-black/70">
+              Noch keine veröffentlichten Grounds in dieser Auswahl.
+            </div>
+          ) : (
+            <div className="grid gap-3">
+              {items.map((g) => (
+                <Link
+                  key={g.id}
+                  href={`/grounds/${g.slug}`}
+                  className="rounded-2xl border border-black/10 bg-white p-5 transition hover:bg-black/[0.02]"
+                >
+                  <div className="text-lg font-semibold">{g.name}</div>
+                  <div className="mt-1 text-sm text-black/70">
+                    {[g.city, g.country].filter(Boolean).join(" · ")}
+                    {g.club ? ` — ${g.club}` : ""}
+                  </div>
+                  <div className="mt-1 text-xs text-black/50">
+                    {g.league ? `Liga: ${g.league}` : ""}
+                    {g.capacity ? ` · Kapazität: ${g.capacity.toLocaleString("de-DE")}` : ""}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Right: map slot */}
+        <aside className="h-[420px] rounded-2xl border border-black/10 bg-black/[0.03] p-6">
+          <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
+            Karte (Phase 2)
+          </div>
+          <div className="mt-3 text-sm text-black/70">
+            Hier kommt später die Kartenansicht rein (Mapbox/Google). Layout ist schon vorbereitet.
+          </div>
+        </aside>
+      </div>
     </div>
   );
 }

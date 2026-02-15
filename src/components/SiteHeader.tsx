@@ -4,7 +4,8 @@ const nav = [
   { href: "/", label: "Start" },
   { href: "/grounds", label: "Grounds" },
   { href: "/reviews", label: "Reviews" },
-  { href: "/login", label: "Login" },
+  { href: "/suggest", label: "Ground vorschlagen" },
+  { href: "/admin", label: "Login" },
 ];
 
 export function SiteHeader() {
