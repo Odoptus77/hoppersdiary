@@ -143,14 +143,22 @@ export default function GroundDetailPage() {
           <div className="grid gap-6 md:grid-cols-[1fr_320px]">
             <section className="space-y-4">
               <div className="rounded-2xl border border-black/10 bg-white p-6">
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center justify-between gap-3">
                   <h2 className="text-xl font-semibold">Reviews</h2>
-                  <Link
-                    href={`/grounds/${ground.slug}/review`}
-                    className="rounded-xl bg-blue-900 px-4 py-2 text-sm font-semibold text-white"
-                  >
-                    + Review schreiben
-                  </Link>
+                  <div className="flex gap-2">
+                    <Link
+                      href={`/grounds/${ground.slug}/tips`}
+                      className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+                    >
+                      Tipps ansehen
+                    </Link>
+                    <Link
+                      href={`/grounds/${ground.slug}/review`}
+                      className="rounded-xl bg-blue-900 px-4 py-2 text-sm font-semibold text-white"
+                    >
+                      + Review schreiben
+                    </Link>
+                  </div>
                 </div>
 
                 {reviews.length === 0 ? (
