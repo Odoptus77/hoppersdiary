@@ -3,10 +3,16 @@
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useParams, useSearchParams } from "next/navigation";
 
 type Ground = { id: string; name: string; slug: string };
 
-export default function CreateReviewPage({ params }: { params: { slug: string } }) {
+export default function CreateReviewPage() {
+  const params = useParams<{ slug: string }>();
+  const slug = typeof params?.slug === "string" ? params.slug : "";
+  const search = useSearchParams();
+  const editId = search.get("edit");
+
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [ground, setGround] = useState<Ground | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -29,16 +35,17 @@ export default function CreateReviewPage({ params }: { params: { slug: string } 
   useEffect(() => {
     async function load() {
       if (!supabase) return;
+      if (!slug) return;
       const { data: g, error } = await supabase
         .from("grounds")
         .select("id,name,slug")
-        .eq("slug", params.slug)
+        .eq("slug", slug)
         .maybeSingle();
       if (error) setError(error.message);
       setGround((g as any) ?? null);
     }
     load();
-  }, [supabase, params.slug]);
+  }, [supabase, slug]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -92,7 +99,7 @@ export default function CreateReviewPage({ params }: { params: { slug: string } 
     <div className="space-y-6">
       <header className="space-y-2">
         <div className="text-sm text-black/60">
-          <Link className="hover:underline" href={`/grounds/${params.slug}`}>
+          <Link className="hover:underline" href={`/grounds/${slug}`}>
             Zurück zum Ground
           </Link>
         </div>

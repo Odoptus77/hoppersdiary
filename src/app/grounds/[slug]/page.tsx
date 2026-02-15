@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useEffect, useMemo, useState } from "react";
+import { useParams } from "next/navigation";
 
 type Ground = {
   id: string;
@@ -33,7 +34,9 @@ type Review = {
   safety: string | null;
 };
 
-export default function GroundDetailPage({ params }: { params: { slug: string } }) {
+export default function GroundDetailPage() {
+  const params = useParams<{ slug: string }>();
+  const slug = typeof params?.slug === "string" ? params.slug : "";
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [ground, setGround] = useState<Ground | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -51,10 +54,16 @@ export default function GroundDetailPage({ params }: { params: { slug: string } 
         return;
       }
 
+      if (!slug) {
+        setError("Ungültiger Link (slug fehlt)." );
+        setLoading(false);
+        return;
+      }
+
       const { data: g, error: ge } = await supabase
         .from("grounds")
         .select("id,name,club,city,country,league,capacity,address,slug")
-        .eq("slug", params.slug)
+        .eq("slug", slug)
         .maybeSingle();
 
       if (ge) {
@@ -86,7 +95,7 @@ export default function GroundDetailPage({ params }: { params: { slug: string } 
     }
 
     load();
-  }, [supabase, params.slug]);
+  }, [supabase, slug]);
 
   const avgRating = reviews.length
     ? reviews.reduce((a, b) => a + b.rating, 0) / reviews.length
