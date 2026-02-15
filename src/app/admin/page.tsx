@@ -9,16 +9,19 @@ export default function AdminPage() {
   const [sending, setSending] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const [sessionEmail, setSessionEmail] = useState<string | null>(null);
+  const [sessionUserId, setSessionUserId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!supabase) return;
 
     supabase.auth.getSession().then(({ data }) => {
       setSessionEmail(data.session?.user.email ?? null);
+      setSessionUserId(data.session?.user.id ?? null);
     });
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
       setSessionEmail(session?.user.email ?? null);
+      setSessionUserId(session?.user.id ?? null);
     });
 
     return () => sub.subscription.unsubscribe();
@@ -123,6 +126,12 @@ export default function AdminPage() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="text-sm text-black/70">
               Eingeloggt als <span className="font-semibold">{sessionEmail}</span>
+              {sessionUserId ? (
+                <>
+                  <span className="mx-2 text-black/40">•</span>
+                  <span className="text-xs">User ID: <code>{sessionUserId}</code></span>
+                </>
+              ) : null}
             </div>
             <button
               onClick={signOut}
