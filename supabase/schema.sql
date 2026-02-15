@@ -146,6 +146,13 @@ BEGIN
     EXECUTE 'create policy "reviews_public_read_if_ground_published" on public.reviews for select using (exists (select 1 from public.grounds g where g.id = reviews.ground_id and g.published = true))';
   END IF;
 
+  -- reviews: own read (so users can always see their own reviews)
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='reviews' AND policyname='reviews_own_read'
+  ) THEN
+    EXECUTE 'create policy "reviews_own_read" on public.reviews for select using (auth.uid() = created_by)';
+  END IF;
+
   -- reviews: auth insert (published grounds only)
   IF NOT EXISTS (
     SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='reviews' AND policyname='reviews_auth_insert'

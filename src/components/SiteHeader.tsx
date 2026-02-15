@@ -6,6 +6,7 @@ const nav = [
   { href: "/reviews", label: "Reviews" },
   { href: "/suggest", label: "Ground vorschlagen" },
   { href: "/me/suggestions", label: "Meine Vorschläge" },
+  { href: "/me/reviews", label: "Meine Reviews" },
   { href: "/admin", label: "Login" },
 ];
 
