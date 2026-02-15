@@ -7,6 +7,23 @@ import { useParams, useSearchParams } from "next/navigation";
 
 type Ground = { id: string; name: string; slug: string };
 
+type ReviewRow = {
+  id: string;
+  visit_date: string;
+  match: string | null;
+  competition: string | null;
+  arrival: string | null;
+  ticketing: string | null;
+  payments: string | null;
+  food_drink: string | null;
+  prices: string | null;
+  condition: string | null;
+  atmosphere: string | null;
+  safety: string | null;
+  tips: string | null;
+  rating: number;
+};
+
 export default function CreateReviewPage() {
   const params = useParams<{ slug: string }>();
   const slug = typeof params?.slug === "string" ? params.slug : "";
@@ -17,6 +34,7 @@ export default function CreateReviewPage() {
   const [ground, setGround] = useState<Ground | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
+  const [loadingEdit, setLoadingEdit] = useState(false);
 
   const [visitDate, setVisitDate] = useState<string>("");
   const [match, setMatch] = useState<string>("");
@@ -33,7 +51,7 @@ export default function CreateReviewPage() {
   const [rating, setRating] = useState<number>(5);
 
   useEffect(() => {
-    async function load() {
+    async function loadGround() {
       if (!supabase) return;
       if (!slug) return;
       const { data: g, error } = await supabase
@@ -44,8 +62,74 @@ export default function CreateReviewPage() {
       if (error) setError(error.message);
       setGround((g as any) ?? null);
     }
-    load();
+    loadGround();
   }, [supabase, slug]);
+
+  useEffect(() => {
+    async function loadEdit() {
+      if (!supabase) return;
+      if (!editId) return;
+
+      setLoadingEdit(true);
+      setError(null);
+
+      const { data: sess } = await supabase.auth.getSession();
+      const userId = sess.session?.user.id;
+      if (!userId) {
+        setError("Bitte einloggen, um ein Review zu bearbeiten.");
+        setLoadingEdit(false);
+        return;
+      }
+
+      // RLS ensures users can only read their own review (reviews_own_read) or public ones.
+      const { data, error } = await supabase
+        .from("reviews")
+        .select(
+          "id,visit_date,match,competition,arrival,ticketing,payments,food_drink,prices,condition,atmosphere,safety,tips,rating,ground_id"
+        )
+        .eq("id", editId)
+        .maybeSingle();
+
+      if (error) {
+        setError(error.message);
+        setLoadingEdit(false);
+        return;
+      }
+
+      if (!data) {
+        setError("Review nicht gefunden (oder keine Berechtigung)." );
+        setLoadingEdit(false);
+        return;
+      }
+
+      const row = data as ReviewRow & { ground_id: string };
+
+      // Basic safety: only allow editing reviews that belong to this ground.
+      if (ground && row.ground_id !== ground.id) {
+        setError("Dieses Review gehört zu einem anderen Ground.");
+        setLoadingEdit(false);
+        return;
+      }
+
+      setVisitDate(row.visit_date);
+      setMatch(row.match ?? "");
+      setCompetition(row.competition ?? "");
+      setArrival(row.arrival ?? "");
+      setTicketing(row.ticketing ?? "");
+      setPayments(row.payments ?? "");
+      setFoodDrink(row.food_drink ?? "");
+      setPrices(row.prices ?? "");
+      setCondition(row.condition ?? "");
+      setAtmosphere(row.atmosphere ?? "");
+      setSafety(row.safety ?? "");
+      setTips(row.tips ?? "");
+      setRating(row.rating ?? 5);
+
+      setLoadingEdit(false);
+    }
+
+    loadEdit();
+  }, [supabase, editId, ground]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -60,7 +144,7 @@ export default function CreateReviewPage() {
     const { data: sess } = await supabase.auth.getSession();
     const userId = sess.session?.user.id;
     if (!userId) {
-      setError("Bitte einloggen, um ein Review zu schreiben.");
+      setError("Bitte einloggen, um ein Review zu speichern.");
       return;
     }
 
@@ -69,9 +153,7 @@ export default function CreateReviewPage() {
       return;
     }
 
-    const { error } = await supabase.from("reviews").insert({
-      created_by: userId,
-      ground_id: ground.id,
+    const payload = {
       visit_date: visitDate,
       match: match || null,
       competition: competition || null,
@@ -85,6 +167,28 @@ export default function CreateReviewPage() {
       safety: safety || null,
       tips: tips || null,
       rating,
+    };
+
+    if (editId) {
+      const { error } = await supabase
+        .from("reviews")
+        .update(payload)
+        .eq("id", editId)
+        .eq("created_by", userId);
+
+      if (error) {
+        setError(error.message);
+        return;
+      }
+
+      setStatus("Review aktualisiert!");
+      return;
+    }
+
+    const { error } = await supabase.from("reviews").insert({
+      created_by: userId,
+      ground_id: ground.id,
+      ...payload,
     });
 
     if (error) {
@@ -103,10 +207,17 @@ export default function CreateReviewPage() {
             Zurück zum Ground
           </Link>
         </div>
-        <h1 className="text-3xl font-semibold">Review schreiben</h1>
+        <h1 className="text-3xl font-semibold">
+          {editId ? "Review bearbeiten" : "Review schreiben"}
+        </h1>
         <p className="text-black/70">
           Pro Besuch/Spiel ein Review. Bitte so praktisch wie möglich.
         </p>
+        {editId ? (
+          <p className="text-sm text-black/70">
+            Du bearbeitest ein bestehendes Review.
+          </p>
+        ) : null}
       </header>
 
       <form onSubmit={submit} className="max-w-3xl space-y-4">
