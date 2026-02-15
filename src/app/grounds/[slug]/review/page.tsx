@@ -69,6 +69,7 @@ export default function CreateReviewPage() {
     async function loadEdit() {
       if (!supabase) return;
       if (!editId) return;
+      if (!ground) return; // wait until we know which ground we're on
 
       setLoadingEdit(true);
       setError(null);
@@ -81,13 +82,13 @@ export default function CreateReviewPage() {
         return;
       }
 
-      // RLS ensures users can only read their own review (reviews_own_read) or public ones.
       const { data, error } = await supabase
         .from("reviews")
         .select(
           "id,visit_date,match,competition,arrival,ticketing,payments,food_drink,prices,condition,atmosphere,safety,tips,rating,ground_id"
         )
         .eq("id", editId)
+        .eq("created_by", userId)
         .maybeSingle();
 
       if (error) {
@@ -104,8 +105,7 @@ export default function CreateReviewPage() {
 
       const row = data as ReviewRow & { ground_id: string };
 
-      // Basic safety: only allow editing reviews that belong to this ground.
-      if (ground && row.ground_id !== ground.id) {
+      if (row.ground_id !== ground.id) {
         setError("Dieses Review gehört zu einem anderen Ground.");
         setLoadingEdit(false);
         return;
@@ -219,6 +219,10 @@ export default function CreateReviewPage() {
           </p>
         ) : null}
       </header>
+
+      {loadingEdit ? (
+        <div className="text-sm text-black/70">Lade Review…</div>
+      ) : null}
 
       <form onSubmit={submit} className="max-w-3xl space-y-4">
         <div className="rounded-2xl border border-black/10 bg-white p-6">
