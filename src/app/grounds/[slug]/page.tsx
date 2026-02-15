@@ -4,6 +4,8 @@ import Link from "next/link";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
+import { Tabs } from "@/components/Tabs";
+import { aggregateReviews } from "@/components/reviews/aggregate";
 
 type Ground = {
   id: string;
@@ -97,8 +99,22 @@ export default function GroundDetailPage() {
     load();
   }, [supabase, slug]);
 
-  const avgRating = reviews.length
-    ? reviews.reduce((a, b) => a + b.rating, 0) / reviews.length
+  const agg = aggregateReviews(reviews);
+  const avgRating = agg.avg;
+
+  const tabs = [
+    { key: "overview", label: "Übersicht", href: `/grounds/${slug}`, active: true },
+    { key: "reviews", label: "Reviews", href: `/grounds/${slug}/reviews`, active: false },
+    { key: "tips", label: "Tipps", href: `/grounds/${slug}/tips`, active: false },
+    { key: "arrival", label: "Anreise", href: `/grounds/${slug}/arrival`, active: false },
+    { key: "tickets", label: "Tickets", href: `/grounds/${slug}/tickets`, active: false },
+    { key: "prices", label: "Preise", href: `/grounds/${slug}/prices`, active: false },
+  ];
+
+  const newest = reviews.length
+    ? reviews
+        .slice()
+        .sort((a, b) => (a.created_at < b.created_at ? 1 : -1))[0]
     : null;
 
   return (
@@ -122,68 +138,103 @@ export default function GroundDetailPage() {
               {[ground.city, ground.country].filter(Boolean).join(" · ")}
               {ground.club ? ` — ${ground.club}` : ""}
             </div>
-
-            <div className="flex flex-wrap gap-2 pt-2">
-              <span className="rounded-full border border-black/10 bg-white px-3 py-1 text-sm">
-                {avgRating ? `Ø ${avgRating.toFixed(1)} / 5 (${reviews.length})` : "Noch keine Reviews"}
-              </span>
-              {ground.league ? (
-                <span className="rounded-full border border-black/10 bg-white px-3 py-1 text-sm">
-                  Liga: {ground.league}
-                </span>
-              ) : null}
-              {ground.capacity ? (
-                <span className="rounded-full border border-black/10 bg-white px-3 py-1 text-sm">
-                  Kapazität: {ground.capacity.toLocaleString("de-DE")}
-                </span>
-              ) : null}
-            </div>
           </header>
+
+          <Tabs items={tabs} />
 
           <div className="grid gap-6 md:grid-cols-[1fr_320px]">
             <section className="space-y-4">
               <div className="rounded-2xl border border-black/10 bg-white p-6">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h2 className="text-xl font-semibold">Reviews</h2>
-                  <div className="flex gap-2">
-                    <Link
-                      href={`/grounds/${ground.slug}/tips`}
-                      className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
-                    >
-                      Tipps ansehen
-                    </Link>
-                    <Link
-                      href={`/grounds/${ground.slug}/review`}
-                      className="rounded-xl bg-blue-900 px-4 py-2 text-sm font-semibold text-white"
-                    >
-                      + Review schreiben
-                    </Link>
+                  <div className="text-sm text-black/70">
+                    {avgRating ? (
+                      <span className="font-semibold">Ø {avgRating.toFixed(1)} / 5</span>
+                    ) : (
+                      <span className="font-semibold">Noch keine Reviews</span>
+                    )}
+                    <span className="ml-2 text-black/50">({agg.count})</span>
                   </div>
+                  <Link
+                    href={`/grounds/${ground.slug}/review`}
+                    className="rounded-xl bg-blue-900 px-4 py-2 text-sm font-semibold text-white"
+                  >
+                    + Review schreiben
+                  </Link>
                 </div>
 
-                {reviews.length === 0 ? (
-                  <p className="mt-3 text-sm text-black/70">
-                    Noch keine Reviews. Sei der/die Erste!
-                  </p>
-                ) : (
-                  <div className="mt-4 space-y-3">
-                    {reviews.map((r) => (
-                      <article
-                        key={r.id}
-                        className="rounded-xl border border-black/10 bg-black/[0.02] p-4"
-                      >
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <div className="text-sm font-semibold">
-                            {new Date(r.visit_date).toLocaleDateString("de-DE")}
-                            {r.match ? ` — ${r.match}` : ""}
-                          </div>
-                          <div className="text-sm text-black/70">{r.rating} / 5</div>
+                {/* Distribution */}
+                <div className="mt-4 space-y-2">
+                  {[5, 4, 3, 2, 1].map((v) => {
+                    const count = agg.dist[v as 1 | 2 | 3 | 4 | 5] ?? 0;
+                    const pct = agg.count ? Math.round((count / agg.count) * 100) : 0;
+                    return (
+                      <div key={v} className="grid grid-cols-[32px_1fr_44px] items-center gap-3 text-sm">
+                        <div className="text-black/70">{v}</div>
+                        <div className="h-2 rounded-full bg-black/[0.06]">
+                          <div className="h-2 rounded-full bg-blue-900" style={{ width: `${pct}%` }} />
                         </div>
-                        {r.tips ? (
-                          <p className="mt-2 text-sm text-black/70">💡 {r.tips}</p>
-                        ) : null}
-                      </article>
-                    ))}
+                        <div className="text-right text-black/60">{count}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {newest ? (
+                  <div className="mt-4 text-xs text-black/50">
+                    Letztes Update: {new Date(newest.created_at).toLocaleString("de-DE")}
+                  </div>
+                ) : null}
+              </div>
+
+              <div className="rounded-2xl border border-black/10 bg-white p-6">
+                <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
+                  Highlights (aus Reviews)
+                </div>
+                {agg.tips.length === 0 && agg.arrival.length === 0 && agg.ticketing.length === 0 ? (
+                  <p className="mt-3 text-sm text-black/70">Noch keine Highlights vorhanden.</p>
+                ) : (
+                  <div className="mt-3 space-y-4">
+                    {agg.tips.length ? (
+                      <div>
+                        <div className="text-sm font-semibold">Tipps</div>
+                        <ul className="mt-2 space-y-1 text-sm text-black/70">
+                          {agg.tips.slice(0, 3).map((t, i) => (
+                            <li key={i}>• {t}</li>
+                          ))}
+                        </ul>
+                        <Link className="mt-2 inline-block text-sm underline" href={`/grounds/${ground.slug}/tips`}>
+                          Mehr Tipps
+                        </Link>
+                      </div>
+                    ) : null}
+
+                    {agg.arrival.length ? (
+                      <div>
+                        <div className="text-sm font-semibold">Anreise</div>
+                        <ul className="mt-2 space-y-1 text-sm text-black/70">
+                          {agg.arrival.slice(0, 2).map((t, i) => (
+                            <li key={i}>• {t}</li>
+                          ))}
+                        </ul>
+                        <Link className="mt-2 inline-block text-sm underline" href={`/grounds/${ground.slug}/arrival`}>
+                          Anreise ansehen
+                        </Link>
+                      </div>
+                    ) : null}
+
+                    {agg.ticketing.length ? (
+                      <div>
+                        <div className="text-sm font-semibold">Tickets</div>
+                        <ul className="mt-2 space-y-1 text-sm text-black/70">
+                          {agg.ticketing.slice(0, 2).map((t, i) => (
+                            <li key={i}>• {t}</li>
+                          ))}
+                        </ul>
+                        <Link className="mt-2 inline-block text-sm underline" href={`/grounds/${ground.slug}/tickets`}>
+                          Tickets ansehen
+                        </Link>
+                      </div>
+                    ) : null}
                   </div>
                 )}
               </div>
@@ -195,6 +246,12 @@ export default function GroundDetailPage() {
                   Quick Facts
                 </div>
                 <div className="mt-3 space-y-2 text-sm text-black/70">
+                  {ground.league ? <div>Liga: {ground.league}</div> : <div>Liga: —</div>}
+                  {ground.capacity ? (
+                    <div>Kapazität: {ground.capacity.toLocaleString("de-DE")}</div>
+                  ) : (
+                    <div>Kapazität: —</div>
+                  )}
                   {ground.address ? <div>Adresse: {ground.address}</div> : <div>Adresse: —</div>}
                 </div>
               </div>
@@ -203,9 +260,7 @@ export default function GroundDetailPage() {
                 <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
                   Karte (Phase 2)
                 </div>
-                <div className="mt-2 text-sm text-black/70">
-                  Map-Slot vorbereitet.
-                </div>
+                <div className="mt-2 text-sm text-black/70">Map-Slot vorbereitet.</div>
               </div>
             </aside>
           </div>

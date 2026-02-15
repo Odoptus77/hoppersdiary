@@ -78,8 +78,11 @@ export default function GroundTipsPage() {
 
   const tabs = [
     { key: "overview", label: "Übersicht", href: `/grounds/${slug}`, active: false },
-    { key: "reviews", label: "Reviews", href: `/grounds/${slug}`, active: false },
+    { key: "reviews", label: "Reviews", href: `/grounds/${slug}/reviews`, active: false },
     { key: "tips", label: "Tipps", href: `/grounds/${slug}/tips`, active: true },
+    { key: "arrival", label: "Anreise", href: `/grounds/${slug}/arrival`, active: false },
+    { key: "tickets", label: "Tickets", href: `/grounds/${slug}/tickets`, active: false },
+    { key: "prices", label: "Preise", href: `/grounds/${slug}/prices`, active: false },
   ];
 
   const agg = aggregateReviews(reviews);
