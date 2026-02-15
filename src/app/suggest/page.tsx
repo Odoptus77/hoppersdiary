@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useMemo, useState } from "react";
 
@@ -67,6 +68,9 @@ export default function SuggestGroundPage() {
         <h1 className="text-3xl font-semibold">Ground vorschlagen</h1>
         <p className="text-black/70">
           Du kannst neue Stadien vorschlagen. Ein Admin prüft und schaltet sie frei.
+        </p>
+        <p className="text-sm text-black/70">
+          Noch nicht eingeloggt? <Link className="underline" href="/login">Zum Login</Link>
         </p>
       </header>
 

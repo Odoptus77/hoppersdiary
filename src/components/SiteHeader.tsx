@@ -7,7 +7,7 @@ const nav = [
   { href: "/suggest", label: "Ground vorschlagen" },
   { href: "/me/suggestions", label: "Meine Vorschläge" },
   { href: "/me/reviews", label: "Meine Reviews" },
-  { href: "/admin", label: "Login" },
+  { href: "/login", label: "Login" },
 ];
 
 export function SiteHeader() {
