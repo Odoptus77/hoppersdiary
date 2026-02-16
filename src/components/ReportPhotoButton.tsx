@@ -57,7 +57,18 @@ export function ReportPhotoButton({ photoId }: { photoId: string }) {
   return (
     <>
       <button
-        onClick={() => setOpen(true)}
+        onClick={async () => {
+          if (!supabase) {
+            setError("Supabase ist nicht konfiguriert.");
+            return;
+          }
+          const { data: sess } = await supabase.auth.getSession();
+          if (!sess.session?.user) {
+            window.location.href = "/login";
+            return;
+          }
+          setOpen(true);
+        }}
         className="text-xs text-black/60 hover:text-black"
       >
         Melden

@@ -58,7 +58,18 @@ export function ReportReviewButton({ reviewId }: { reviewId: string }) {
   return (
     <>
       <button
-        onClick={() => setOpen(true)}
+        onClick={async () => {
+          if (!supabase) {
+            setError("Supabase ist nicht konfiguriert.");
+            return;
+          }
+          const { data: sess } = await supabase.auth.getSession();
+          if (!sess.session?.user) {
+            window.location.href = "/login";
+            return;
+          }
+          setOpen(true);
+        }}
         className="text-xs text-black/50 hover:text-black/80"
       >
         Melden
