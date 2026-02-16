@@ -43,7 +43,7 @@ export function PhotoUploader({ groundId, reviewId }: { groundId: string; review
         if (upErr) throw upErr;
 
         const { error: insErr } = await supabase.from("photos").insert({
-          created_by: userId,
+          // created_by is set server-side via trigger (auth.uid())
           ground_id: groundId,
           review_id: reviewId ?? null,
           storage_bucket: "review-photos",
