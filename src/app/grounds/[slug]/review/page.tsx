@@ -4,6 +4,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
+import { PhotoUploader } from "@/components/photos/PhotoUploader";
 
 type Ground = { id: string; name: string; slug: string };
 
@@ -284,6 +285,16 @@ export default function CreateReviewPage() {
 
           {status && <p className="mt-3 text-sm text-green-800">{status}</p>}
           {error && <p className="mt-3 text-sm text-red-700">{error}</p>}
+
+          <div className="mt-6 border-t border-black/10 pt-6">
+            {editId && ground ? (
+              <PhotoUploader groundId={ground.id} reviewId={editId} />
+            ) : (
+              <div className="text-sm text-black/70">
+                Bilder kannst du nach dem ersten Speichern im <b>Bearbeiten</b>-Modus hochladen.
+              </div>
+            )}
+          </div>
         </div>
       </form>
     </div>

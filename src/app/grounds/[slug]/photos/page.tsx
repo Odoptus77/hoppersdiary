@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Tabs } from "@/components/Tabs";
+import { ReportPhotoButton } from "@/components/ReportPhotoButton";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -128,26 +129,29 @@ export default function GroundPhotosPage() {
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
               {photos.map((ph) => (
-                <a
+                <div
                   key={ph.id}
-                  href={ph.url}
-                  target="_blank"
-                  rel="noreferrer"
                   className="group overflow-hidden rounded-2xl border border-black/10 bg-white"
                 >
-                  <div className="relative aspect-[4/3]">
-                    <Image
-                      src={ph.url}
-                      alt={ph.caption ?? "Ground photo"}
-                      fill
-                      className="object-cover transition group-hover:scale-[1.02]"
-                      sizes="(max-width: 768px) 50vw, 33vw"
-                    />
+                  <a href={ph.url} target="_blank" rel="noreferrer" className="block">
+                    <div className="relative aspect-[4/3]">
+                      <Image
+                        src={ph.url}
+                        alt={ph.caption ?? "Ground photo"}
+                        fill
+                        className="object-cover transition group-hover:scale-[1.02]"
+                        sizes="(max-width: 768px) 50vw, 33vw"
+                      />
+                    </div>
+                  </a>
+
+                  <div className="flex items-center justify-between gap-2 p-3">
+                    <div className="text-xs text-black/70 truncate">
+                      {ph.caption ?? ""}
+                    </div>
+                    <ReportPhotoButton photoId={ph.id} />
                   </div>
-                  {ph.caption ? (
-                    <div className="p-3 text-xs text-black/70">{ph.caption}</div>
-                  ) : null}
-                </a>
+                </div>
               ))}
             </div>
           )}
