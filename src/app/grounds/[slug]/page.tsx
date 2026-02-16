@@ -88,6 +88,7 @@ export default function GroundDetailPage() {
           "id,created_at,visit_date,match,competition,rating,tips,arrival,ticketing,payments,food_drink,prices,atmosphere,safety"
         )
         .eq("ground_id", (g as any).id)
+        .eq("hidden", false)
         .order("visit_date", { ascending: false });
 
       if (re) setError(re.message);

@@ -59,6 +59,7 @@ export default function GroundTicketsPage() {
         .from("reviews")
         .select("id,rating,ticketing")
         .eq("ground_id", (g as any).id)
+        .eq("hidden", false)
         .order("created_at", { ascending: false });
 
       if (re) setError(re.message);

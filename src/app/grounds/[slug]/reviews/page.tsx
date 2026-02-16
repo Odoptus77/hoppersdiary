@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Tabs } from "@/components/Tabs";
+import { ReportReviewButton } from "@/components/ReportReviewButton";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -69,6 +70,7 @@ export default function GroundReviewsPage() {
         .from("reviews")
         .select("id,visit_date,match,rating,tips")
         .eq("ground_id", (g as any).id)
+        .eq("hidden", false)
         .order("visit_date", { ascending: false });
 
       if (re) setError(re.message);
@@ -135,6 +137,9 @@ export default function GroundReviewsPage() {
                       <div className="text-sm text-black/70">{r.rating} / 5</div>
                     </div>
                     {r.tips ? <p className="mt-2 text-sm text-black/70">💡 {r.tips}</p> : null}
+                    <div className="mt-3 flex justify-end">
+                      <ReportReviewButton reviewId={r.id} />
+                    </div>
                   </article>
                 ))}
               </div>

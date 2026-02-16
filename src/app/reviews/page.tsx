@@ -49,6 +49,7 @@ export default function ReviewsPage() {
         .select(
           "id,created_at,visit_date,match,competition,rating,tips,ground_id, ground:grounds(id,name,slug,city,country)"
         )
+        .eq("hidden", false)
         .order("created_at", { ascending: false })
         .limit(50);
 

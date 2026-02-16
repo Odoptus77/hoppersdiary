@@ -139,11 +139,11 @@ BEGIN
     EXECUTE 'create policy "suggestions_admin_all" on public.ground_suggestions for all using (public.is_admin()) with check (public.is_admin())';
   END IF;
 
-  -- reviews: public read if ground published
+  -- reviews: public read if ground published (only visible reviews)
   IF NOT EXISTS (
     SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='reviews' AND policyname='reviews_public_read_if_ground_published'
   ) THEN
-    EXECUTE 'create policy "reviews_public_read_if_ground_published" on public.reviews for select using (exists (select 1 from public.grounds g where g.id = reviews.ground_id and g.published = true))';
+    EXECUTE 'create policy "reviews_public_read_if_ground_published" on public.reviews for select using (hidden = false and exists (select 1 from public.grounds g where g.id = reviews.ground_id and g.published = true))';
   END IF;
 
   -- reviews: own read (so users can always see their own reviews)

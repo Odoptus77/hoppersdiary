@@ -59,6 +59,7 @@ export default function GroundArrivalPage() {
         .from("reviews")
         .select("id,rating,arrival")
         .eq("ground_id", (g as any).id)
+        .eq("hidden", false)
         .order("created_at", { ascending: false });
 
       if (re) setError(re.message);
