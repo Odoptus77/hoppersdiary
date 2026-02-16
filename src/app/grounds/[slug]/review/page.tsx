@@ -4,7 +4,6 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { PhotoUploader } from "@/components/photos/PhotoUploader";
 
 type Ground = { id: string; name: string; slug: string };
 
@@ -37,6 +36,8 @@ export default function CreateReviewPage() {
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [loadingEdit, setLoadingEdit] = useState(false);
+  const [files, setFiles] = useState<File[]>([]);
+  const [uploadingPhotos, setUploadingPhotos] = useState(false);
 
   const [visitDate, setVisitDate] = useState<string>("");
   const [match, setMatch] = useState<string>("");
@@ -133,6 +134,40 @@ export default function CreateReviewPage() {
     loadEdit();
   }, [supabase, editId, ground]);
 
+  async function uploadSelectedPhotos(reviewId: string) {
+    if (!supabase) return;
+    if (!ground) return;
+    if (files.length === 0) return;
+
+    setUploadingPhotos(true);
+
+    try {
+      for (const file of files) {
+        const ext = file.name.split(".").pop() || "jpg";
+        const safeExt = ext.toLowerCase().replace(/[^a-z0-9]/g, "");
+        const path = `${ground.id}/${Date.now()}-${Math.random().toString(16).slice(2)}.${safeExt}`;
+
+        const { error: upErr } = await supabase.storage
+          .from("review-photos")
+          .upload(path, file, { upsert: false, contentType: file.type });
+        if (upErr) throw upErr;
+
+        const { error: insErr } = await supabase.from("photos").insert({
+          ground_id: ground.id,
+          review_id: reviewId,
+          storage_bucket: "review-photos",
+          storage_path: path,
+          hidden: false,
+        });
+        if (insErr) throw insErr;
+      }
+
+      setFiles([]);
+    } finally {
+      setUploadingPhotos(false);
+    }
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -183,6 +218,14 @@ export default function CreateReviewPage() {
         return;
       }
 
+      // If user selected photos while editing, upload them now.
+      try {
+        await uploadSelectedPhotos(editId);
+      } catch (err: any) {
+        setError(err?.message ?? "Foto-Upload fehlgeschlagen.");
+        return;
+      }
+
       setStatus("Review aktualisiert!");
       return;
     }
@@ -203,12 +246,24 @@ export default function CreateReviewPage() {
     }
 
     const newId = (inserted as any)?.id as string | undefined;
-    setStatus("Review gespeichert! Du kannst jetzt Bilder hochladen.");
 
     if (newId) {
-      // Switch into edit mode so uploader can attach to this review.
+      // Upload photos selected in the same form.
+      try {
+        await uploadSelectedPhotos(newId);
+      } catch (err: any) {
+        setError(err?.message ?? "Foto-Upload fehlgeschlagen.");
+        return;
+      }
+
+      setStatus("Review gespeichert!");
+
+      // Switch into edit mode so user can add more photos later.
       router.replace(`/grounds/${ground.slug}/review?edit=${newId}`);
+      return;
     }
+
+    setStatus("Review gespeichert!");
   }
 
   return (
@@ -298,13 +353,26 @@ export default function CreateReviewPage() {
           {error && <p className="mt-3 text-sm text-red-700">{error}</p>}
 
           <div className="mt-6 border-t border-black/10 pt-6">
-            {editId && ground ? (
-              <PhotoUploader groundId={ground.id} reviewId={editId} />
-            ) : (
-              <div className="text-sm text-black/70">
-                Bilder kannst du nach dem ersten Speichern im <b>Bearbeiten</b>-Modus hochladen.
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-black/70">Bilder (optional)</label>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                disabled={uploadingPhotos}
+                onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
+                className="block w-full text-sm"
+              />
+              <div className="text-xs text-black/50">
+                Du kannst Bilder direkt mit dem Review hochladen. Upload erfolgt beim Speichern.
               </div>
-            )}
+              {files.length ? (
+                <div className="text-xs text-black/60">Ausgewählt: {files.length} Datei(en)</div>
+              ) : null}
+              {uploadingPhotos ? (
+                <div className="text-sm text-black/70">Bilder werden hochgeladen…</div>
+              ) : null}
+            </div>
           </div>
         </div>
       </form>
