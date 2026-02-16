@@ -9,13 +9,28 @@ const inter = Inter({
   display: "swap",
 });
 
+import { SITE } from "@/lib/site";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE.url),
   title: {
     default: "Hoppersdiary — Community-Plattform für Groundhopper",
     template: "%s — Hoppersdiary",
   },
-  description:
-    "Praktische Tipps, Bewertungen und Erfahrungsberichte für Stadionbesuche (D-A-CH zuerst).",
+  description: SITE.description,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: SITE.url,
+    siteName: SITE.name,
+    title: "Hoppersdiary — Community-Plattform für Groundhopper",
+    description: SITE.description,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Hoppersdiary — Community-Plattform für Groundhopper",
+    description: SITE.description,
+  },
 };
 
 export default function RootLayout({
