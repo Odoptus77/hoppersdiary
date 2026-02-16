@@ -1,23 +1,29 @@
 "use client";
 
-import { Tabs } from "@/components/Tabs";
-import { aggregateReviews } from "@/components/reviews/aggregate";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import Link from "next/link";
+import Image from "next/image";
+import { Tabs } from "@/components/Tabs";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 type Ground = { id: string; name: string; slug: string };
 
-type Review = { id: string; rating: number; prices: string | null };
+type Photo = {
+  id: string;
+  created_at: string;
+  storage_bucket: string;
+  storage_path: string;
+  caption: string | null;
+};
 
-export default function GroundPricesPage() {
+export default function GroundPhotosPage() {
   const params = useParams<{ slug: string }>();
   const slug = typeof params?.slug === "string" ? params.slug : "";
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   const [ground, setGround] = useState<Ground | null>(null);
-  const [reviews, setReviews] = useState<Review[]>([]);
+  const [photos, setPhotos] = useState<(Photo & { url: string })[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -55,15 +61,29 @@ export default function GroundPricesPage() {
 
       setGround(g as Ground);
 
-      const { data: r, error: re } = await supabase
-        .from("reviews")
-        .select("id,rating,prices")
+      const { data: p, error: pe } = await supabase
+        .from("photos")
+        .select("id,created_at,storage_bucket,storage_path,caption")
         .eq("ground_id", (g as any).id)
-        .eq("hidden", false)
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .limit(200);
 
-      if (re) setError(re.message);
-      setReviews((r as Review[]) ?? []);
+      if (pe) {
+        setError(pe.message);
+        setPhotos([]);
+        setLoading(false);
+        return;
+      }
+
+      const rows = (p as Photo[]) ?? [];
+      const withUrls = rows.map((row) => {
+        const { data } = supabase.storage
+          .from(row.storage_bucket)
+          .getPublicUrl(row.storage_path);
+        return { ...row, url: data.publicUrl };
+      });
+
+      setPhotos(withUrls);
       setLoading(false);
     }
 
@@ -76,11 +96,9 @@ export default function GroundPricesPage() {
     { key: "tips", label: "Tipps", href: `/grounds/${slug}/tips`, active: false },
     { key: "arrival", label: "Anreise", href: `/grounds/${slug}/arrival`, active: false },
     { key: "tickets", label: "Tickets", href: `/grounds/${slug}/tickets`, active: false },
-    { key: "prices", label: "Preise", href: `/grounds/${slug}/prices`, active: true },
-    { key: "photos", label: "Bilder", href: `/grounds/${slug}/photos`, active: false },
+    { key: "prices", label: "Preise", href: `/grounds/${slug}/prices`, active: false },
+    { key: "photos", label: "Bilder", href: `/grounds/${slug}/photos`, active: true },
   ];
-
-  const agg = aggregateReviews(reviews);
 
   return (
     <div className="space-y-6">
@@ -96,24 +114,46 @@ export default function GroundPricesPage() {
               <span className="mx-2">/</span>
               <Link className="hover:underline" href={`/grounds/${ground.slug}`}>{ground.name}</Link>
               <span className="mx-2">/</span>
-              <span>Preise</span>
+              <span>Bilder</span>
             </div>
-            <h1 className="text-3xl font-semibold">Preise — {ground.name}</h1>
+            <h1 className="text-3xl font-semibold">Bilder — {ground.name}</h1>
           </header>
 
           <Tabs items={tabs} />
 
-          <div className="rounded-2xl border border-black/10 bg-white p-6">
-            <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">Aus Reviews</div>
-            {agg.prices.length === 0 ? (
-              <p className="mt-3 text-sm text-black/70">Noch keine Preis-Infos.</p>
-            ) : (
-              <ul className="mt-3 space-y-2 text-sm text-black/70">
-                {agg.prices.map((t, i) => (
-                  <li key={i}>• {t}</li>
-                ))}
-              </ul>
-            )}
+          {photos.length === 0 ? (
+            <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-black/70">
+              Noch keine Bilder.
+            </div>
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
+              {photos.map((ph) => (
+                <a
+                  key={ph.id}
+                  href={ph.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group overflow-hidden rounded-2xl border border-black/10 bg-white"
+                >
+                  <div className="relative aspect-[4/3]">
+                    <Image
+                      src={ph.url}
+                      alt={ph.caption ?? "Ground photo"}
+                      fill
+                      className="object-cover transition group-hover:scale-[1.02]"
+                      sizes="(max-width: 768px) 50vw, 33vw"
+                    />
+                  </div>
+                  {ph.caption ? (
+                    <div className="p-3 text-xs text-black/70">{ph.caption}</div>
+                  ) : null}
+                </a>
+              ))}
+            </div>
+          )}
+
+          <div className="text-xs text-black/50">
+            Hinweis: Upload folgt als nächster Schritt im Review-Formular + Moderation.
           </div>
         </>
       )}

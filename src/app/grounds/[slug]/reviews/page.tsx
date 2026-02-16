@@ -89,6 +89,7 @@ export default function GroundReviewsPage() {
     { key: "arrival", label: "Anreise", href: `/grounds/${slug}/arrival`, active: false },
     { key: "tickets", label: "Tickets", href: `/grounds/${slug}/tickets`, active: false },
     { key: "prices", label: "Preise", href: `/grounds/${slug}/prices`, active: false },
+    { key: "photos", label: "Bilder", href: `/grounds/${slug}/photos`, active: false },
   ];
 
   return (
