@@ -1,18 +1,57 @@
-import { Tabs } from "@/components/Tabs";
+import type { Metadata } from "next";
+import { SITE } from "@/lib/site";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export default async function GroundLayout({
-  children,
+export async function generateMetadata({
   params,
 }: {
-  children: React.ReactNode;
   params: Promise<{ slug: string }>;
-}) {
+}): Promise<Metadata> {
   const { slug } = await params;
 
-  const base = `/grounds/${slug}`;
+  const supabase = createSupabaseServerClient();
+  if (!supabase) {
+    return {
+      title: `Ground` ,
+      alternates: { canonical: `/grounds/${slug}` },
+    };
+  }
 
-  // We can't know active tab here without route segment; each page passes its active key
-  // via query (?tab=) would be messy. So we keep tabs inside each page for now.
-  // This file exists so we can later move shared UI here.
+  const { data } = await supabase
+    .from("grounds")
+    .select("name,city,country")
+    .eq("slug", slug)
+    .maybeSingle();
+
+  const name = data?.name ?? "Ground";
+  const loc = [data?.city, data?.country].filter(Boolean).join(" · ");
+
+  const title = loc ? `${name} (${loc})` : name;
+  const desc = `Tipps, Reviews und Fotos für ${name}.`;
+
+  return {
+    title,
+    description: desc,
+    alternates: { canonical: `/grounds/${slug}` },
+    openGraph: {
+      title: `${title} — ${SITE.name}`,
+      description: desc,
+      url: `${SITE.url}/grounds/${slug}`,
+      siteName: SITE.name,
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} — ${SITE.name}`,
+      description: desc,
+    },
+  };
+}
+
+export default function GroundLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return <>{children}</>;
 }
