@@ -148,13 +148,25 @@ export default function AdminPage() {
               href="/admin/grounds"
               className="rounded-xl bg-blue-900 px-4 py-2 text-sm font-semibold text-white"
             >
-              Grounds bearbeiten
+              Grounds
             </a>
             <a
               href="/admin/suggestions"
               className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
             >
-              Vorschläge prüfen
+              Vorschläge
+            </a>
+            <a
+              href="/admin/reports"
+              className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+            >
+              Review-Meldungen
+            </a>
+            <a
+              href="/admin/photos"
+              className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+            >
+              Bild-Meldungen
             </a>
           </div>
         </div>

@@ -3,7 +3,7 @@
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { PhotoUploader } from "@/components/photos/PhotoUploader";
 
 type Ground = { id: string; name: string; slug: string };
@@ -29,6 +29,7 @@ export default function CreateReviewPage() {
   const params = useParams<{ slug: string }>();
   const slug = typeof params?.slug === "string" ? params.slug : "";
   const search = useSearchParams();
+  const router = useRouter();
   const editId = search.get("edit");
 
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
@@ -186,18 +187,28 @@ export default function CreateReviewPage() {
       return;
     }
 
-    const { error } = await supabase.from("reviews").insert({
-      created_by: userId,
-      ground_id: ground.id,
-      ...payload,
-    });
+    const { data: inserted, error } = await supabase
+      .from("reviews")
+      .insert({
+        created_by: userId,
+        ground_id: ground.id,
+        ...payload,
+      })
+      .select("id")
+      .single();
 
     if (error) {
       setError(error.message);
       return;
     }
 
-    setStatus("Review gespeichert!");
+    const newId = (inserted as any)?.id as string | undefined;
+    setStatus("Review gespeichert! Du kannst jetzt Bilder hochladen.");
+
+    if (newId) {
+      // Switch into edit mode so uploader can attach to this review.
+      router.replace(`/grounds/${ground.slug}/review?edit=${newId}`);
+    }
   }
 
   return (
