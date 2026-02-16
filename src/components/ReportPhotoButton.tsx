@@ -32,6 +32,7 @@ export function ReportPhotoButton({ photoId }: { photoId: string }) {
     const userId = sess.session?.user.id;
     if (!userId) {
       setError("Bitte einloggen, um zu melden.");
+      setStatus(null);
       return;
     }
 
@@ -124,7 +125,16 @@ export function ReportPhotoButton({ photoId }: { photoId: string }) {
               </div>
 
               {status ? <p className="text-sm text-green-800">{status}</p> : null}
-              {error ? <p className="text-sm text-red-700">{error}</p> : null}
+              {error ? (
+                <p className="text-sm text-red-700">
+                  {error}{" "}
+                  {error.toLowerCase().includes("einloggen") ? (
+                    <a className="underline" href="/login">
+                      Login
+                    </a>
+                  ) : null}
+                </p>
+              ) : null}
             </div>
           </div>
         </div>
