@@ -125,7 +125,17 @@ export default function GroundReviewsPage() {
             </div>
 
             {reviews.length === 0 ? (
-              <p className="mt-3 text-sm text-black/70">Noch keine Reviews.</p>
+              <div className="mt-4 rounded-2xl border border-black/10 bg-white p-6 text-sm text-black/70">
+                Noch keine Reviews. Sei der/die Erste!
+                <div className="mt-3">
+                  <Link
+                    href={`/grounds/${ground.slug}/review`}
+                    className="inline-flex rounded-xl bg-blue-900 px-4 py-2 text-sm font-semibold text-white"
+                  >
+                    + Review schreiben
+                  </Link>
+                </div>
+              </div>
             ) : (
               <div className="mt-4 space-y-3">
                 {reviews.map((r) => (
