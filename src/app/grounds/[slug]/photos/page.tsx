@@ -66,6 +66,7 @@ export default function GroundPhotosPage() {
         .from("photos")
         .select("id,created_at,storage_bucket,storage_path,caption")
         .eq("ground_id", (g as any).id)
+        .eq("hidden", false)
         .order("created_at", { ascending: false })
         .limit(200);
 
