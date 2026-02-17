@@ -27,7 +27,7 @@ export async function generateMetadata({
   const loc = [data?.city, data?.country].filter(Boolean).join(" · ");
 
   const title = loc ? `${name} (${loc})` : name;
-  const desc = `Tipps, Reviews und Fotos für ${name}.`;
+  const desc = `Tipps, Reviews und Fotos für ${name}${loc ? ` in ${loc}` : ""}.`; 
 
   return {
     title,

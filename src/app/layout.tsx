@@ -25,11 +25,20 @@ export const metadata: Metadata = {
     siteName: SITE.name,
     title: "Hoppersdiary — Community-Plattform für Groundhopper",
     description: SITE.description,
+    images: [
+      {
+        url: SITE.ogImage,
+        width: 1200,
+        height: 630,
+        alt: "Hoppersdiary",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Hoppersdiary — Community-Plattform für Groundhopper",
     description: SITE.description,
+    images: [SITE.ogImage],
   },
 };
 

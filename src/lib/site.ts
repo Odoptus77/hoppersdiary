@@ -4,4 +4,5 @@ export const SITE = {
   url: "https://hoppersdiary.vercel.app",
   description:
     "Praktische Reisetipps, Bewertungen und Erfahrungsberichte für Stadionbesuche (D-A-CH zuerst).",
+  ogImage: "/og-default.svg",
 };
