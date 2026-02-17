@@ -16,6 +16,10 @@ type Ground = {
   league: string | null;
   capacity: number | null;
   address: string | null;
+  ticket_url: string | null;
+  away_section: string | null;
+  transit_notes: string | null;
+  payment_options: string | null;
   slug: string;
 };
 
@@ -64,7 +68,7 @@ export default function GroundDetailPage() {
 
       const { data: g, error: ge } = await supabase
         .from("grounds")
-        .select("id,name,club,city,country,league,capacity,address,slug")
+        .select("id,name,club,city,country,league,capacity,address,ticket_url,away_section,transit_notes,payment_options,slug")
         .eq("slug", slug)
         .maybeSingle();
 
@@ -255,6 +259,43 @@ export default function GroundDetailPage() {
                     <div>Kapazität: —</div>
                   )}
                   {ground.address ? <div>Adresse: {ground.address}</div> : <div>Adresse: —</div>}
+
+                  {ground.ticket_url ? (
+                    <div>
+                      Tickets: {" "}
+                      <a
+                        className="underline"
+                        href={ground.ticket_url}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Link
+                      </a>
+                    </div>
+                  ) : (
+                    <div>Tickets: —</div>
+                  )}
+
+                  {ground.away_section ? (
+                    <div>Gästebereich: {ground.away_section}</div>
+                  ) : (
+                    <div>Gästebereich: —</div>
+                  )}
+
+                  {ground.payment_options ? (
+                    <div>Zahlung: {ground.payment_options}</div>
+                  ) : (
+                    <div>Zahlung: —</div>
+                  )}
+
+                  {ground.transit_notes ? (
+                    <div>
+                      <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
+                        Anreise-Notizen
+                      </div>
+                      <div className="mt-1">{ground.transit_notes}</div>
+                    </div>
+                  ) : null}
                 </div>
               </div>
 
