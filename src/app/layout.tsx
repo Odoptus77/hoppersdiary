@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { MobileBottomNav } from "@/components/AppNav";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -52,8 +53,9 @@ export default function RootLayout({
       <body className={`${inter.className} antialiased`}>
         <div className="min-h-dvh bg-white text-black">
           <SiteHeader />
-          <main className="mx-auto max-w-6xl px-4 py-10">{children}</main>
+          <main className="mx-auto max-w-6xl px-4 py-8 pb-24 md:py-10">{children}</main>
           <SiteFooter />
+          <MobileBottomNav />
         </div>
       </body>
     </html>
