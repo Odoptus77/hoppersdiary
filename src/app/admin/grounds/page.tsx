@@ -42,7 +42,7 @@ export default function AdminGroundsPage() {
     let query = supabase
       .from("grounds")
       .select(
-        "id,name,club,city,country,league,capacity,address,slug,published,created_at"
+        "id,name,club,city,country,league,capacity,address,ticket_url,away_section,transit_notes,payment_options,slug,published,created_at"
       )
       .order("name", { ascending: true })
       .limit(500);
@@ -97,6 +97,10 @@ export default function AdminGroundsPage() {
       league: editing.league,
       capacity: editing.capacity,
       address: editing.address,
+      ticket_url: (editing as any).ticket_url ?? null,
+      away_section: (editing as any).away_section ?? null,
+      transit_notes: (editing as any).transit_notes ?? null,
+      payment_options: (editing as any).payment_options ?? null,
       published: editing.published,
     };
 
@@ -287,6 +291,44 @@ export default function AdminGroundsPage() {
                 }
                 className="rounded-xl border border-black/10 bg-white px-4 py-2"
                 placeholder="Adresse"
+              />
+
+              <input
+                value={(editing as any).ticket_url ?? ""}
+                onChange={(e) =>
+                  setEditing({ ...(editing as any), ticket_url: e.target.value || null })
+                }
+                className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                placeholder="Ticket-URL (optional)"
+              />
+
+              <input
+                value={(editing as any).away_section ?? ""}
+                onChange={(e) =>
+                  setEditing({ ...(editing as any), away_section: e.target.value || null })
+                }
+                className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                placeholder="Gästebereich / Away Section (optional)"
+              />
+
+              <textarea
+                value={(editing as any).transit_notes ?? ""}
+                onChange={(e) =>
+                  setEditing({ ...(editing as any), transit_notes: e.target.value || null })
+                }
+                rows={3}
+                className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                placeholder="ÖPNV/Anreise-Notizen (kurz)"
+              />
+
+              <textarea
+                value={(editing as any).payment_options ?? ""}
+                onChange={(e) =>
+                  setEditing({ ...(editing as any), payment_options: e.target.value || null })
+                }
+                rows={2}
+                className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                placeholder="Zahlungsmöglichkeiten (z.B. Cash, Karte, Apple Pay)"
               />
 
               <div className="flex items-center justify-end gap-2 pt-2">
