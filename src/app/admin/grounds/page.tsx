@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { parseGoogleMapsLatLng } from "@/lib/parseMaps";
 import { useEffect, useMemo, useState } from "react";
 
 type Ground = {
@@ -13,6 +14,13 @@ type Ground = {
   league: string | null;
   capacity: number | null;
   address: string | null;
+  ticket_url?: string | null;
+  away_section?: string | null;
+  transit_notes?: string | null;
+  payment_options?: string | null;
+  lat?: number | null;
+  lng?: number | null;
+  gmaps_url?: string | null;
   slug: string;
   published: boolean;
   created_at: string;
@@ -42,7 +50,7 @@ export default function AdminGroundsPage() {
     let query = supabase
       .from("grounds")
       .select(
-        "id,name,club,city,country,league,capacity,address,ticket_url,away_section,transit_notes,payment_options,slug,published,created_at"
+        "id,name,club,city,country,league,capacity,address,ticket_url,away_section,transit_notes,payment_options,lat,lng,gmaps_url,slug,published,created_at"
       )
       .order("name", { ascending: true })
       .limit(500);
@@ -101,6 +109,9 @@ export default function AdminGroundsPage() {
       away_section: (editing as any).away_section ?? null,
       transit_notes: (editing as any).transit_notes ?? null,
       payment_options: (editing as any).payment_options ?? null,
+      lat: (editing as any).lat ?? null,
+      lng: (editing as any).lng ?? null,
+      gmaps_url: (editing as any).gmaps_url ?? null,
       published: editing.published,
     };
 
@@ -330,6 +341,69 @@ export default function AdminGroundsPage() {
                 className="rounded-xl border border-black/10 bg-white px-4 py-2"
                 placeholder="Zahlungsmöglichkeiten (z.B. Cash, Karte, Apple Pay)"
               />
+
+              <div className="rounded-2xl border border-black/10 bg-black/[0.02] p-4">
+                <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
+                  Karte (Vorbereitung)
+                </div>
+                <div className="mt-3 grid gap-3">
+                  <input
+                    value={(editing as any).gmaps_url ?? ""}
+                    onChange={(e) =>
+                      setEditing({ ...(editing as any), gmaps_url: e.target.value || null })
+                    }
+                    className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                    placeholder="Google Maps Link (optional)"
+                  />
+
+                  <div className="grid gap-3 md:grid-cols-2">
+                    <input
+                      value={(editing as any).lat ?? ""}
+                      onChange={(e) =>
+                        setEditing({
+                          ...(editing as any),
+                          lat: e.target.value ? Number(e.target.value) : null,
+                        })
+                      }
+                      className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                      placeholder="Latitude"
+                      inputMode="decimal"
+                    />
+                    <input
+                      value={(editing as any).lng ?? ""}
+                      onChange={(e) =>
+                        setEditing({
+                          ...(editing as any),
+                          lng: e.target.value ? Number(e.target.value) : null,
+                        })
+                      }
+                      className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                      placeholder="Longitude"
+                      inputMode="decimal"
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const parsed = parseGoogleMapsLatLng((editing as any).gmaps_url ?? "");
+                      if (!parsed) {
+                        alert("Konnte keine Koordinaten aus dem Link extrahieren.");
+                        return;
+                      }
+                      setEditing({ ...(editing as any), lat: parsed.lat, lng: parsed.lng });
+                    }}
+                    className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+                  >
+                    Koordinaten aus Google-Maps-Link übernehmen
+                  </button>
+
+                  <div className="text-xs text-black/50">
+                    Tipp: Google Maps URL mit <code>@lat,lng</code> oder <code>!3dlat!4dlng</code>
+                    funktioniert.
+                  </div>
+                </div>
+              </div>
 
               <div className="flex items-center justify-end gap-2 pt-2">
                 <button
