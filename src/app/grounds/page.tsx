@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { GroundsMap } from "@/components/maps/GroundsMap";
 import { useEffect, useMemo, useState } from "react";
 
 type Ground = {
@@ -13,6 +14,8 @@ type Ground = {
   league: string | null;
   capacity: number | null;
   slug: string;
+  lat: number | null;
+  lng: number | null;
 };
 
 export default function GroundsPage() {
@@ -37,7 +40,7 @@ export default function GroundsPage() {
 
       let query = supabase
         .from("grounds")
-        .select("id,name,club,city,country,league,capacity,slug")
+        .select("id,name,club,city,country,league,capacity,slug,lat,lng")
         .order("name", { ascending: true });
 
       // Only published grounds are visible to guests anyway (RLS).
@@ -125,14 +128,22 @@ export default function GroundsPage() {
           )}
         </div>
 
-        {/* Right: map slot */}
-        <aside className="h-[420px] rounded-2xl border border-black/10 bg-black/[0.03] p-6">
+        {/* Right: map */}
+        <aside className="space-y-3">
           <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
-            Karte (Phase 2)
+            Karte
           </div>
-          <div className="mt-3 text-sm text-black/70">
-            Hier kommt später die Kartenansicht rein (Mapbox/Google). Layout ist schon vorbereitet.
-          </div>
+          <GroundsMap
+            pins={items
+              .filter((g) => typeof g.lat === "number" && typeof g.lng === "number")
+              .map((g) => ({
+                id: g.id,
+                name: g.name,
+                slug: g.slug,
+                lat: g.lat as number,
+                lng: g.lng as number,
+              }))}
+          />
         </aside>
       </div>
     </div>
