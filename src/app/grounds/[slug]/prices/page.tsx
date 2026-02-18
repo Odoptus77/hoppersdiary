@@ -1,7 +1,7 @@
 "use client";
 
 import { Tabs } from "@/components/Tabs";
-import { aggregateReviews } from "@/components/reviews/aggregate";
+// aggregateReviews not used (we show full texts)
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -9,7 +9,12 @@ import { useEffect, useMemo, useState } from "react";
 
 type Ground = { id: string; name: string; slug: string };
 
-type Review = { id: string; rating: number; prices: string | null };
+type Review = {
+  id: string;
+  visit_date: string;
+  match: string | null;
+  prices: string | null;
+};
 
 export default function GroundPricesPage() {
   const params = useParams<{ slug: string }>();
@@ -57,7 +62,7 @@ export default function GroundPricesPage() {
 
       const { data: r, error: re } = await supabase
         .from("reviews")
-        .select("id,rating,prices")
+        .select("id,visit_date,match,prices")
         .eq("ground_id", (g as any).id)
         .eq("hidden", false)
         .order("created_at", { ascending: false });
@@ -80,7 +85,7 @@ export default function GroundPricesPage() {
     { key: "photos", label: "Bilder", href: `/grounds/${slug}/photos`, active: false },
   ];
 
-  const agg = aggregateReviews(reviews);
+  const items = reviews.filter((r) => (r.prices ?? "").trim().length > 0);
 
   return (
     <div className="space-y-6">
@@ -104,15 +109,32 @@ export default function GroundPricesPage() {
           <Tabs items={tabs} />
 
           <div className="rounded-2xl border border-black/10 bg-white p-6">
-            <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">Aus Reviews</div>
-            {agg.prices.length === 0 ? (
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
+                Aus Reviews
+              </div>
+              <Link
+                href={`/grounds/${ground.slug}/review`}
+                className="text-sm font-semibold underline"
+              >
+                + Review schreiben
+              </Link>
+            </div>
+
+            {items.length === 0 ? (
               <p className="mt-3 text-sm text-black/70">Noch keine Preis-Infos.</p>
             ) : (
-              <ul className="mt-3 space-y-2 text-sm text-black/70">
-                {agg.prices.map((t, i) => (
-                  <li key={i}>• {t}</li>
+              <div className="mt-4 space-y-4">
+                {items.map((r) => (
+                  <article key={r.id} className="rounded-2xl border border-black/10 bg-black/[0.02] p-5">
+                    <div className="text-sm font-semibold">
+                      {new Date(r.visit_date).toLocaleDateString("de-DE")}
+                      {r.match ? ` — ${r.match}` : ""}
+                    </div>
+                    <div className="mt-2 whitespace-pre-line text-sm text-black/75">{r.prices}</div>
+                  </article>
                 ))}
-              </ul>
+              </div>
             )}
           </div>
         </>

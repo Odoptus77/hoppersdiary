@@ -1,7 +1,7 @@
 "use client";
 
 import { Tabs } from "@/components/Tabs";
-import { aggregateReviews } from "@/components/reviews/aggregate";
+// aggregateReviews not used (we show full texts)
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -11,7 +11,8 @@ type Ground = { id: string; name: string; slug: string };
 
 type Review = {
   id: string;
-  rating: number;
+  visit_date: string;
+  match: string | null;
   tips: string | null;
   arrival: string | null;
   ticketing: string | null;
@@ -64,7 +65,7 @@ export default function GroundTipsPage() {
 
       const { data: r, error: re } = await supabase
         .from("reviews")
-        .select("id,rating,tips,arrival,ticketing,prices")
+        .select("id,visit_date,match,tips,arrival,ticketing,prices")
         .eq("ground_id", (g as any).id)
         .eq("hidden", false)
         .order("created_at", { ascending: false });
@@ -87,7 +88,10 @@ export default function GroundTipsPage() {
     { key: "photos", label: "Bilder", href: `/grounds/${slug}/photos`, active: false },
   ];
 
-  const agg = aggregateReviews(reviews);
+  const tipsItems = reviews.filter((r) => (r.tips ?? "").trim().length > 0);
+  const arrivalItems = reviews.filter((r) => (r.arrival ?? "").trim().length > 0);
+  const ticketItems = reviews.filter((r) => (r.ticketing ?? "").trim().length > 0);
+  const priceItems = reviews.filter((r) => (r.prices ?? "").trim().length > 0);
 
   return (
     <div className="space-y-6">
@@ -110,62 +114,86 @@ export default function GroundTipsPage() {
 
           <Tabs items={tabs} />
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-4">
             <div className="rounded-2xl border border-black/10 bg-white p-6">
-              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">Top Tipps</div>
-              {agg.tips.length === 0 ? (
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">Tipps</div>
+                <Link href={`/grounds/${ground.slug}/review`} className="text-sm font-semibold underline">
+                  + Review schreiben
+                </Link>
+              </div>
+              {tipsItems.length === 0 ? (
                 <p className="mt-3 text-sm text-black/70">Noch keine Tipps vorhanden.</p>
               ) : (
-                <ul className="mt-3 space-y-2 text-sm text-black/70">
-                  {agg.tips.map((t, i) => (
-                    <li key={i}>• {t}</li>
+                <div className="mt-4 space-y-4">
+                  {tipsItems.map((r) => (
+                    <article key={r.id} className="rounded-2xl border border-black/10 bg-black/[0.02] p-5">
+                      <div className="text-sm font-semibold">
+                        {new Date(r.visit_date).toLocaleDateString("de-DE")}
+                        {r.match ? ` — ${r.match}` : ""}
+                      </div>
+                      <div className="mt-2 whitespace-pre-line text-sm text-black/75">{r.tips}</div>
+                    </article>
                   ))}
-                </ul>
+                </div>
               )}
             </div>
 
-            <div className="rounded-2xl border border-black/10 bg-white p-6">
-              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">Anreise</div>
-              {agg.arrival.length === 0 ? (
-                <p className="mt-3 text-sm text-black/70">Noch keine Anreise-Tipps.</p>
-              ) : (
-                <ul className="mt-3 space-y-2 text-sm text-black/70">
-                  {agg.arrival.map((t, i) => (
-                    <li key={i}>• {t}</li>
-                  ))}
-                </ul>
-              )}
-            </div>
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="rounded-2xl border border-black/10 bg-white p-6">
+                <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">Anreise</div>
+                {arrivalItems.length === 0 ? (
+                  <p className="mt-3 text-sm text-black/70">Noch keine Anreise-Tipps.</p>
+                ) : (
+                  <div className="mt-4 space-y-4">
+                    {arrivalItems.map((r) => (
+                      <article key={r.id} className="rounded-2xl border border-black/10 bg-black/[0.02] p-4">
+                        <div className="text-sm font-semibold">
+                          {new Date(r.visit_date).toLocaleDateString("de-DE")}
+                        </div>
+                        <div className="mt-2 whitespace-pre-line text-sm text-black/75">{r.arrival}</div>
+                      </article>
+                    ))}
+                  </div>
+                )}
+              </div>
 
-            <div className="rounded-2xl border border-black/10 bg-white p-6">
-              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">Ticketing</div>
-              {agg.ticketing.length === 0 ? (
-                <p className="mt-3 text-sm text-black/70">Noch keine Ticketing-Infos.</p>
-              ) : (
-                <ul className="mt-3 space-y-2 text-sm text-black/70">
-                  {agg.ticketing.map((t, i) => (
-                    <li key={i}>• {t}</li>
-                  ))}
-                </ul>
-              )}
-            </div>
+              <div className="rounded-2xl border border-black/10 bg-white p-6">
+                <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">Ticketkauf</div>
+                {ticketItems.length === 0 ? (
+                  <p className="mt-3 text-sm text-black/70">Noch keine Ticketing-Infos.</p>
+                ) : (
+                  <div className="mt-4 space-y-4">
+                    {ticketItems.map((r) => (
+                      <article key={r.id} className="rounded-2xl border border-black/10 bg-black/[0.02] p-4">
+                        <div className="text-sm font-semibold">
+                          {new Date(r.visit_date).toLocaleDateString("de-DE")}
+                        </div>
+                        <div className="mt-2 whitespace-pre-line text-sm text-black/75">{r.ticketing}</div>
+                      </article>
+                    ))}
+                  </div>
+                )}
+              </div>
 
-            <div className="rounded-2xl border border-black/10 bg-white p-6">
-              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">Preise</div>
-              {agg.prices.length === 0 ? (
-                <p className="mt-3 text-sm text-black/70">Noch keine Preis-Infos.</p>
-              ) : (
-                <ul className="mt-3 space-y-2 text-sm text-black/70">
-                  {agg.prices.map((t, i) => (
-                    <li key={i}>• {t}</li>
-                  ))}
-                </ul>
-              )}
+              <div className="rounded-2xl border border-black/10 bg-white p-6">
+                <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">Preise</div>
+                {priceItems.length === 0 ? (
+                  <p className="mt-3 text-sm text-black/70">Noch keine Preis-Infos.</p>
+                ) : (
+                  <div className="mt-4 space-y-4">
+                    {priceItems.map((r) => (
+                      <article key={r.id} className="rounded-2xl border border-black/10 bg-black/[0.02] p-4">
+                        <div className="text-sm font-semibold">
+                          {new Date(r.visit_date).toLocaleDateString("de-DE")}
+                        </div>
+                        <div className="mt-2 whitespace-pre-line text-sm text-black/75">{r.prices}</div>
+                      </article>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-
-          <div className="text-xs text-black/50">
-            MVP Hinweis: Aggregation ist aktuell simpel (erste Snippets). Später: bessere Zusammenfassung + Tagging.
           </div>
         </>
       )}
