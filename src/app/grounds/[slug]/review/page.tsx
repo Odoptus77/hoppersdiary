@@ -3,9 +3,18 @@
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 
 type Ground = { id: string; name: string; slug: string };
+
+type PhotoRow = {
+  id: string;
+  storage_bucket: string;
+  storage_path: string;
+  caption: string | null;
+  created_at: string;
+};
 
 type ReviewRow = {
   id: string;
@@ -36,6 +45,8 @@ export default function CreateReviewPage() {
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [loadingEdit, setLoadingEdit] = useState(false);
+  const [reviewPhotos, setReviewPhotos] = useState<(PhotoRow & { url: string })[]>([]);
+  const [deletingPhotoId, setDeletingPhotoId] = useState<string | null>(null);
   const [files, setFiles] = useState<File[]>([]);
   const [uploadingPhotos, setUploadingPhotos] = useState(false);
 
@@ -151,11 +162,55 @@ export default function CreateReviewPage() {
       setTips(row.tips ?? "");
       setRating(row.rating ?? 5);
 
+      // Load existing photos for this review (so user can see/delete)
+      const { data: p, error: pe } = await supabase
+        .from("photos")
+        .select("id,storage_bucket,storage_path,caption,created_at")
+        .eq("review_id", editId)
+        .eq("hidden", false)
+        .order("created_at", { ascending: false })
+        .limit(50);
+
+      if (!pe) {
+        const rows = (p as PhotoRow[]) ?? [];
+        const withUrls = rows.map((row) => {
+          const { data } = supabase.storage
+            .from(row.storage_bucket)
+            .getPublicUrl(row.storage_path);
+          return { ...row, url: data.publicUrl };
+        });
+        setReviewPhotos(withUrls);
+      }
+
       setLoadingEdit(false);
     }
 
     loadEdit();
   }, [supabase, editId, ground]);
+
+  async function deletePhoto(ph: { id: string; storage_bucket: string; storage_path: string }) {
+    if (!supabase) return;
+    if (!confirm("Bild wirklich löschen?")) return;
+
+    setDeletingPhotoId(ph.id);
+    setError(null);
+
+    try {
+      const { error: stErr } = await supabase.storage
+        .from(ph.storage_bucket)
+        .remove([ph.storage_path]);
+      if (stErr) throw stErr;
+
+      const { error: dbErr } = await supabase.from("photos").delete().eq("id", ph.id);
+      if (dbErr) throw dbErr;
+
+      setReviewPhotos((prev) => prev.filter((p) => p.id !== ph.id));
+    } catch (e: any) {
+      setError(e?.message ?? "Löschen fehlgeschlagen.");
+    } finally {
+      setDeletingPhotoId(null);
+    }
+  }
 
   async function uploadSelectedPhotos(reviewId: string) {
     if (!supabase) return;
@@ -183,6 +238,20 @@ export default function CreateReviewPage() {
           hidden: false,
         });
         if (insErr) throw insErr;
+
+        // Add to UI immediately (edit mode)
+        const { data: u } = supabase.storage.from("review-photos").getPublicUrl(path);
+        setReviewPhotos((prev) => [
+          {
+            id: `tmp-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+            storage_bucket: "review-photos",
+            storage_path: path,
+            caption: null,
+            created_at: new Date().toISOString(),
+            url: u.publicUrl,
+          },
+          ...prev,
+        ]);
       }
 
       setFiles([]);
@@ -603,8 +672,54 @@ export default function CreateReviewPage() {
           {error && <p className="mt-3 text-sm text-red-700">{error}</p>}
 
           <div className="mt-6 border-t border-black/10 pt-6">
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-black/70">Bilder (optional)</label>
+            <div className="space-y-3">
+              <label className="block text-sm font-medium text-black/70">Bilder</label>
+
+              {editId ? (
+                <div>
+                  <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                    Bereits hochgeladen
+                  </div>
+                  {reviewPhotos.length === 0 ? (
+                    <div className="mt-2 text-sm text-black/60">Noch keine Bilder.</div>
+                  ) : (
+                    <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                      {reviewPhotos.map((ph) => (
+                        <div
+                          key={ph.id}
+                          className="overflow-hidden rounded-2xl border border-black/10 bg-white"
+                        >
+                          <a href={ph.url} target="_blank" rel="noreferrer" className="block">
+                            <div className="relative aspect-[4/3]">
+                              <Image
+                                src={ph.url}
+                                alt={ph.caption ?? "Review photo"}
+                                fill
+                                className="object-cover"
+                                sizes="(max-width: 768px) 50vw, 33vw"
+                              />
+                            </div>
+                          </a>
+                          <div className="flex items-center justify-end gap-2 p-3">
+                            <button
+                              type="button"
+                              disabled={deletingPhotoId === ph.id}
+                              onClick={() => deletePhoto(ph)}
+                              className="rounded-xl border border-black/10 bg-white px-3 py-1 text-sm hover:bg-black/[0.03] disabled:opacity-60"
+                            >
+                              {deletingPhotoId === ph.id ? "Lösche…" : "Löschen"}
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : null}
+
+              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                Neue Bilder hinzufügen
+              </div>
               <input
                 type="file"
                 accept="image/*"
