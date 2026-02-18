@@ -293,7 +293,16 @@ export default function CreateReviewPage() {
 
       <form onSubmit={submit} className="max-w-3xl space-y-4">
         <div className="rounded-2xl border border-black/10 bg-white p-6">
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                Basis
+              </div>
+              <div className="mt-1 text-sm text-black/60">Das Pflichtprogramm – kurz und klar.</div>
+            </div>
+          </div>
+
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
             <label className="grid gap-2 text-sm text-black/70">
               Besuchsdatum *
               <input
@@ -321,33 +330,151 @@ export default function CreateReviewPage() {
           </div>
 
           <div className="mt-3 grid gap-3 md:grid-cols-2">
-            <input
-              value={match}
-              onChange={(e) => setMatch(e.target.value)}
-              placeholder="Spiel (z.B. Hertha vs. HSV)"
-              className="rounded-xl border border-black/10 bg-white px-4 py-2"
-            />
-            <input
-              value={competition}
-              onChange={(e) => setCompetition(e.target.value)}
-              placeholder="Liga/Wettbewerb"
-              className="rounded-xl border border-black/10 bg-white px-4 py-2"
-            />
+            <label className="grid gap-2 text-sm text-black/70">
+              Spiel (optional)
+              <input
+                value={match}
+                onChange={(e) => setMatch(e.target.value)}
+                placeholder="z.B. Hertha vs. HSV"
+                className="rounded-xl border border-black/10 bg-white px-4 py-2"
+              />
+            </label>
+            <label className="grid gap-2 text-sm text-black/70">
+              Wettbewerb (optional)
+              <input
+                value={competition}
+                onChange={(e) => setCompetition(e.target.value)}
+                placeholder="Liga/Wettbewerb"
+                className="rounded-xl border border-black/10 bg-white px-4 py-2"
+              />
+            </label>
           </div>
 
-          <textarea value={arrival} onChange={(e)=>setArrival(e.target.value)} placeholder="Anreise" rows={3} className="mt-3 w-full rounded-xl border border-black/10 bg-white px-4 py-2" />
-          <textarea value={ticketing} onChange={(e)=>setTicketing(e.target.value)} placeholder="Ticketkauf" rows={3} className="mt-3 w-full rounded-xl border border-black/10 bg-white px-4 py-2" />
-          <textarea value={payments} onChange={(e)=>setPayments(e.target.value)} placeholder="Zahlungsmöglichkeiten" rows={2} className="mt-3 w-full rounded-xl border border-black/10 bg-white px-4 py-2" />
-          <textarea value={foodDrink} onChange={(e)=>setFoodDrink(e.target.value)} placeholder="Bier & Essen" rows={3} className="mt-3 w-full rounded-xl border border-black/10 bg-white px-4 py-2" />
-          <textarea value={prices} onChange={(e)=>setPrices(e.target.value)} placeholder="Preise" rows={2} className="mt-3 w-full rounded-xl border border-black/10 bg-white px-4 py-2" />
-          <textarea value={condition} onChange={(e)=>setCondition(e.target.value)} placeholder="Stadionzustand" rows={2} className="mt-3 w-full rounded-xl border border-black/10 bg-white px-4 py-2" />
-          <textarea value={atmosphere} onChange={(e)=>setAtmosphere(e.target.value)} placeholder="Atmosphäre" rows={2} className="mt-3 w-full rounded-xl border border-black/10 bg-white px-4 py-2" />
-          <textarea value={safety} onChange={(e)=>setSafety(e.target.value)} placeholder="Sicherheit" rows={2} className="mt-3 w-full rounded-xl border border-black/10 bg-white px-4 py-2" />
-          <textarea value={tips} onChange={(e)=>setTips(e.target.value)} placeholder="Tipps für zukünftige Besucher" rows={3} className="mt-3 w-full rounded-xl border border-black/10 bg-white px-4 py-2" />
+          <div className="mt-6 border-t border-black/10 pt-6">
+            <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+              Anreise & Tickets
+            </div>
+            <div className="mt-3 grid gap-3">
+              <label className="grid gap-2 text-sm text-black/70">
+                Anreise
+                <textarea
+                  value={arrival}
+                  onChange={(e) => setArrival(e.target.value)}
+                  placeholder="Parken, ÖPNV, Fantrennung, Einlass…"
+                  rows={3}
+                  className="w-full rounded-xl border border-black/10 bg-white px-4 py-2"
+                />
+              </label>
+              <label className="grid gap-2 text-sm text-black/70">
+                Ticketkauf
+                <textarea
+                  value={ticketing}
+                  onChange={(e) => setTicketing(e.target.value)}
+                  placeholder="Wo kaufen? Print@home? Abendkasse? Probleme?"
+                  rows={3}
+                  className="w-full rounded-xl border border-black/10 bg-white px-4 py-2"
+                />
+              </label>
+              <label className="grid gap-2 text-sm text-black/70">
+                Zahlungsmöglichkeiten
+                <textarea
+                  value={payments}
+                  onChange={(e) => setPayments(e.target.value)}
+                  placeholder="Cash, Karte, Apple Pay – und ob überall"
+                  rows={2}
+                  className="w-full rounded-xl border border-black/10 bg-white px-4 py-2"
+                />
+              </label>
+            </div>
+          </div>
 
-          <button className="mt-4 rounded-xl bg-blue-900 px-5 py-3 text-sm font-semibold text-white hover:brightness-110">
-            Speichern
-          </button>
+          <div className="mt-6 border-t border-black/10 pt-6">
+            <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+              Im Stadion
+            </div>
+            <div className="mt-3 grid gap-3">
+              <label className="grid gap-2 text-sm text-black/70">
+                Bier & Essen
+                <textarea
+                  value={foodDrink}
+                  onChange={(e) => setFoodDrink(e.target.value)}
+                  placeholder="Qualität, Auswahl, Wartezeit…"
+                  rows={3}
+                  className="w-full rounded-xl border border-black/10 bg-white px-4 py-2"
+                />
+              </label>
+              <label className="grid gap-2 text-sm text-black/70">
+                Preise
+                <textarea
+                  value={prices}
+                  onChange={(e) => setPrices(e.target.value)}
+                  placeholder="Bier, Bratwurst, Wasser… (gerne konkrete Zahlen)"
+                  rows={2}
+                  className="w-full rounded-xl border border-black/10 bg-white px-4 py-2"
+                />
+              </label>
+              <div className="grid gap-3 md:grid-cols-2">
+                <label className="grid gap-2 text-sm text-black/70">
+                  Stadionzustand
+                  <textarea
+                    value={condition}
+                    onChange={(e) => setCondition(e.target.value)}
+                    placeholder="Sicht, Sitzplätze, Toiletten…"
+                    rows={2}
+                    className="w-full rounded-xl border border-black/10 bg-white px-4 py-2"
+                  />
+                </label>
+                <label className="grid gap-2 text-sm text-black/70">
+                  Atmosphäre
+                  <textarea
+                    value={atmosphere}
+                    onChange={(e) => setAtmosphere(e.target.value)}
+                    placeholder="Support, Stimmung, Sound…"
+                    rows={2}
+                    className="w-full rounded-xl border border-black/10 bg-white px-4 py-2"
+                  />
+                </label>
+              </div>
+              <label className="grid gap-2 text-sm text-black/70">
+                Sicherheit
+                <textarea
+                  value={safety}
+                  onChange={(e) => setSafety(e.target.value)}
+                  placeholder="Einlass, Ordner, Fantrennung, Polizei…"
+                  rows={2}
+                  className="w-full rounded-xl border border-black/10 bg-white px-4 py-2"
+                />
+              </label>
+            </div>
+          </div>
+
+          <div className="mt-6 border-t border-black/10 pt-6">
+            <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+              Tipps
+            </div>
+            <label className="mt-3 grid gap-2 text-sm text-black/70">
+              Tipps für zukünftige Besucher
+              <textarea
+                value={tips}
+                onChange={(e) => setTips(e.target.value)}
+                placeholder="Was sollte man wissen? Beste Plätze? Fanartikel?"
+                rows={3}
+                className="w-full rounded-xl border border-black/10 bg-white px-4 py-2"
+              />
+            </label>
+          </div>
+
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <button className="rounded-full bg-blue-900 px-6 py-3 text-sm font-semibold text-white hover:brightness-110">
+              {editId ? "Änderungen speichern" : "Review speichern"}
+            </button>
+            <Link
+              href={`/grounds/${slug}`}
+              className="rounded-full border border-black/10 bg-white px-6 py-3 text-sm font-semibold text-black hover:bg-black/[0.03]"
+            >
+              Abbrechen
+            </Link>
+          </div>
 
           {status && <p className="mt-3 text-sm text-green-800">{status}</p>}
           {error && <p className="mt-3 text-sm text-red-700">{error}</p>}

@@ -131,7 +131,7 @@ export default function GroundDetailPage() {
         <div className="text-sm text-red-700">{error}</div>
       ) : !ground ? null : (
         <>
-          <header className="space-y-2">
+          <header className="space-y-4">
             <div className="text-sm text-black/60">
               <Link className="hover:underline" href="/grounds">
                 Grounds
@@ -139,10 +139,71 @@ export default function GroundDetailPage() {
               <span className="mx-2">/</span>
               <span>{ground.name}</span>
             </div>
-            <h1 className="text-4xl font-semibold tracking-tight">{ground.name}</h1>
-            <div className="text-black/70">
-              {[ground.city, ground.country].filter(Boolean).join(" · ")}
-              {ground.club ? ` — ${ground.club}` : ""}
+
+            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div>
+                <h1 className="text-4xl font-semibold tracking-tight">{ground.name}</h1>
+                <div className="mt-2 text-black/70">
+                  {[ground.city, ground.country].filter(Boolean).join(" · ")}
+                  {ground.club ? ` — ${ground.club}` : ""}
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <Link
+                  href={`/grounds/${ground.slug}/review`}
+                  className="rounded-full bg-blue-900 px-5 py-2.5 text-sm font-semibold text-white hover:brightness-110"
+                >
+                  + Review
+                </Link>
+                <Link
+                  href={`/grounds/${ground.slug}/photos`}
+                  className="rounded-full border border-black/10 bg-white px-5 py-2.5 text-sm font-semibold text-black hover:bg-black/[0.03]"
+                >
+                  Bilder
+                </Link>
+              </div>
+            </div>
+
+            <div className="grid gap-3 rounded-2xl border border-black/10 bg-white p-5 md:grid-cols-3">
+              <div>
+                <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                  Bewertung
+                </div>
+                <div className="mt-1 text-2xl font-semibold">
+                  {avgRating ? `Ø ${avgRating.toFixed(1)}` : "—"}
+                  <span className="text-base font-medium text-black/50"> / 5</span>
+                </div>
+                <div className="mt-1 text-sm text-black/60">{agg.count} Reviews</div>
+              </div>
+
+              <div className="md:col-span-2">
+                <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                  Quick Facts
+                </div>
+                <div className="mt-2 grid gap-x-6 gap-y-2 text-sm text-black/70 md:grid-cols-2">
+                  <div>{ground.league ? `Liga: ${ground.league}` : "Liga: —"}</div>
+                  <div>
+                    {ground.capacity
+                      ? `Kapazität: ${ground.capacity.toLocaleString("de-DE")}`
+                      : "Kapazität: —"}
+                  </div>
+                  <div>{ground.away_section ? `Gästebereich: ${ground.away_section}` : "Gästebereich: —"}</div>
+                  <div>{ground.payment_options ? `Zahlung: ${ground.payment_options}` : "Zahlung: —"}</div>
+                  <div className="md:col-span-2">
+                    {ground.ticket_url ? (
+                      <span>
+                        Tickets: {" "}
+                        <a className="underline" href={ground.ticket_url} target="_blank" rel="noreferrer">
+                          Link
+                        </a>
+                      </span>
+                    ) : (
+                      "Tickets: —"
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           </header>
 
@@ -154,17 +215,19 @@ export default function GroundDetailPage() {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="text-sm text-black/70">
                     {avgRating ? (
-                      <span className="font-semibold">Ø {avgRating.toFixed(1)} / 5</span>
+                      <span className="font-semibold">Review-Score</span>
                     ) : (
                       <span className="font-semibold">Noch keine Reviews</span>
                     )}
-                    <span className="ml-2 text-black/50">({agg.count})</span>
+                    <span className="ml-2 text-black/50">
+                      {avgRating ? `Ø ${avgRating.toFixed(1)} / 5` : "—"} ({agg.count})
+                    </span>
                   </div>
                   <Link
-                    href={`/grounds/${ground.slug}/review`}
-                    className="rounded-xl bg-blue-900 px-4 py-2 text-sm font-semibold text-white"
+                    href={`/grounds/${ground.slug}/reviews`}
+                    className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-black/[0.03]"
                   >
-                    + Review schreiben
+                    Alle Reviews
                   </Link>
                 </div>
 
@@ -249,61 +312,53 @@ export default function GroundDetailPage() {
             <aside className="space-y-4">
               <div className="rounded-2xl border border-black/10 bg-white p-6">
                 <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
-                  Quick Facts
+                  Praktisch
                 </div>
-                <div className="mt-3 space-y-2 text-sm text-black/70">
-                  {ground.league ? <div>Liga: {ground.league}</div> : <div>Liga: —</div>}
-                  {ground.capacity ? (
-                    <div>Kapazität: {ground.capacity.toLocaleString("de-DE")}</div>
-                  ) : (
-                    <div>Kapazität: —</div>
-                  )}
-                  {ground.address ? <div>Adresse: {ground.address}</div> : <div>Adresse: —</div>}
 
-                  {ground.ticket_url ? (
+                <div className="mt-3 space-y-3 text-sm text-black/70">
+                  {ground.address ? (
                     <div>
-                      Tickets: {" "}
-                      <a
-                        className="underline"
-                        href={ground.ticket_url}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Link
-                      </a>
+                      <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                        Adresse
+                      </div>
+                      <div className="mt-1">{ground.address}</div>
                     </div>
-                  ) : (
-                    <div>Tickets: —</div>
-                  )}
-
-                  {ground.away_section ? (
-                    <div>Gästebereich: {ground.away_section}</div>
-                  ) : (
-                    <div>Gästebereich: —</div>
-                  )}
-
-                  {ground.payment_options ? (
-                    <div>Zahlung: {ground.payment_options}</div>
-                  ) : (
-                    <div>Zahlung: —</div>
-                  )}
+                  ) : null}
 
                   {ground.transit_notes ? (
                     <div>
-                      <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
+                      <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
                         Anreise-Notizen
                       </div>
                       <div className="mt-1">{ground.transit_notes}</div>
+                      <Link
+                        className="mt-2 inline-block text-sm underline"
+                        href={`/grounds/${ground.slug}/arrival`}
+                      >
+                        Mehr zur Anreise
+                      </Link>
                     </div>
-                  ) : null}
-                </div>
-              </div>
+                  ) : (
+                    <div className="text-sm text-black/60">
+                      Noch keine Anreise-Notizen. Schreib ein Review und hilf der Community.
+                    </div>
+                  )}
 
-              <div className="rounded-2xl border border-black/10 bg-black/[0.03] p-6">
-                <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
-                  Karte (Phase 2)
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    <Link
+                      href={`/grounds/${ground.slug}/review`}
+                      className="rounded-xl bg-blue-900 px-4 py-2 text-sm font-semibold text-white"
+                    >
+                      + Review schreiben
+                    </Link>
+                    <Link
+                      href={`/grounds/${ground.slug}/photos`}
+                      className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-black/[0.03]"
+                    >
+                      Bilder ansehen
+                    </Link>
+                  </div>
                 </div>
-                <div className="mt-2 text-sm text-black/70">Map-Slot vorbereitet.</div>
               </div>
             </aside>
           </div>
