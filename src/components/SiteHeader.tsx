@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AppNav } from "@/components/AppNav";
+import { AccountButtons } from "@/components/AccountButtons";
 
 export function SiteHeader() {
   return (
@@ -12,20 +13,7 @@ export function SiteHeader() {
 
         <AppNav />
 
-        <div className="hidden items-center gap-2 md:flex">
-          <Link
-            href="/login"
-            className="rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-medium text-black transition hover:bg-black/[0.03]"
-          >
-            Login
-          </Link>
-          <Link
-            href="/admin"
-            className="rounded-full bg-blue-900 px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110"
-          >
-            Admin
-          </Link>
-        </div>
+        <AccountButtons />
       </div>
     </header>
   );

@@ -63,17 +63,24 @@ export default function GroundsPage() {
 
   return (
     <div className="space-y-6">
-      <header className="space-y-2">
-        <h1 className="text-3xl font-semibold">Grounds</h1>
-        <p className="text-black/70">
-          MVP: D-A-CH Seed. Kartenansicht kommt in Phase 2 (Layout ist dafür vorbereitet).
-        </p>
+      <header className="flex flex-wrap items-end justify-between gap-3">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-semibold tracking-tight">Grounds</h1>
+          <p className="text-sm text-black/65">
+            Entdecke Stadien in D-A-CH. Filter nach Name und Land – und schau dir echte Tipps aus
+            Besuchen an.
+          </p>
+        </div>
+        <div className="text-sm text-black/55">{items.length} Grounds</div>
       </header>
 
-      <div className="grid gap-6 md:grid-cols-[1fr_360px]">
+      <div className="grid gap-6 md:grid-cols-[1fr_420px]">
         {/* Left: list */}
         <div className="space-y-4">
           <div className="flex flex-col gap-3 rounded-2xl border border-black/10 bg-white p-4 md:flex-row md:items-center">
+            <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45 md:mr-2">
+              Filter
+            </div>
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}

@@ -103,7 +103,7 @@ export default function MePage() {
           </div>
 
           <div className="text-xs text-black/50">
-            Admin-Tools findest du unter <Link className="underline" href="/admin">/admin</Link>.
+            Admin-Tools sind nur für Admins sichtbar.
           </div>
         </>
       )}
