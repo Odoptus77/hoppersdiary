@@ -16,6 +16,7 @@ type Ground = {
 type Review = {
   id: string;
   created_at?: string;
+  created_by?: string;
   visit_date: string;
   match: string | null;
   competition?: string | null;
@@ -38,6 +39,7 @@ export default function GroundReviewsPage() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [ground, setGround] = useState<Ground | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [myUserId, setMyUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -56,6 +58,9 @@ export default function GroundReviewsPage() {
         setLoading(false);
         return;
       }
+
+      const { data: sess } = await supabase.auth.getSession();
+      setMyUserId(sess.session?.user?.id ?? null);
 
       const { data: g, error: ge } = await supabase
         .from("grounds")
@@ -79,7 +84,7 @@ export default function GroundReviewsPage() {
       const { data: r, error: re } = await supabase
         .from("reviews")
         .select(
-          "id,created_at,visit_date,match,competition,rating,arrival,ticketing,payments,food_drink,prices,condition,atmosphere,safety,tips"
+          "id,created_at,visit_date,match,competition,rating,arrival,ticketing,payments,food_drink,prices,condition,atmosphere,safety,tips,created_by"
         )
         .eq("ground_id", (g as any).id)
         .eq("hidden", false)
@@ -153,6 +158,13 @@ export default function GroundReviewsPage() {
                 {reviews.map((r) => (
                   <article key={r.id} className="overflow-hidden rounded-2xl border border-black/10 bg-white">
                     <div className="flex flex-wrap items-center justify-between gap-2 border-b border-black/10 bg-black/[0.02] px-5 py-4">
+                      <div className="flex items-center gap-2">
+                        {myUserId && r.created_by === myUserId ? (
+                          <span className="rounded-full border border-blue-900/20 bg-blue-900/10 px-2 py-0.5 text-xs font-semibold text-blue-900">
+                            Dein Review
+                          </span>
+                        ) : null}
+                      </div>
                       <div>
                         <div className="text-sm font-semibold">
                           {new Date(r.visit_date).toLocaleDateString("de-DE")}
@@ -162,8 +174,18 @@ export default function GroundReviewsPage() {
                           <div className="mt-1 text-xs text-black/55">{r.competition}</div>
                         ) : null}
                       </div>
-                      <div className="rounded-full bg-blue-900 px-3 py-1 text-sm font-semibold text-white">
-                        {r.rating} / 5
+                      <div className="flex items-center gap-2">
+                        {myUserId && r.created_by === myUserId ? (
+                          <Link
+                            href={`/grounds/${ground.slug}/review?edit=${r.id}`}
+                            className="rounded-full border border-black/10 bg-white px-3 py-1 text-sm font-semibold text-black hover:bg-black/[0.03]"
+                          >
+                            Bearbeiten
+                          </Link>
+                        ) : null}
+                        <div className="rounded-full bg-blue-900 px-3 py-1 text-sm font-semibold text-white">
+                          {r.rating} / 5
+                        </div>
                       </div>
                     </div>
 
