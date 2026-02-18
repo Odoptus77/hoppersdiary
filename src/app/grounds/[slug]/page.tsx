@@ -37,6 +37,7 @@ type Review = {
   payments: string | null;
   food_drink: string | null;
   prices: string | null;
+  condition: string | null;
   atmosphere: string | null;
   safety: string | null;
 };
@@ -114,7 +115,7 @@ export default function GroundDetailPage() {
       const { data: r, error: re } = await supabase
         .from("reviews")
         .select(
-          "id,created_at,visit_date,match,competition,rating,tips,arrival,ticketing,payments,food_drink,prices,atmosphere,safety"
+          "id,created_at,visit_date,match,competition,rating,tips,arrival,ticketing,payments,food_drink,prices,condition,atmosphere,safety"
         )
         .eq("ground_id", (g as any).id)
         .eq("hidden", false)
@@ -313,54 +314,110 @@ export default function GroundDetailPage() {
               </div>
 
               <div className="rounded-2xl border border-black/10 bg-white p-6">
-                <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
-                  Highlights (aus Reviews)
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
+                    Reviews
+                  </div>
+                  <Link
+                    href={`/grounds/${ground.slug}/reviews`}
+                    className="text-sm font-semibold underline"
+                  >
+                    Alle ansehen
+                  </Link>
                 </div>
-                {agg.tips.length === 0 && agg.arrival.length === 0 && agg.ticketing.length === 0 ? (
-                  <p className="mt-3 text-sm text-black/70">Noch keine Highlights vorhanden.</p>
+
+                {reviews.length === 0 ? (
+                  <p className="mt-3 text-sm text-black/70">Noch keine Reviews. Sei der/die Erste!</p>
                 ) : (
-                  <div className="mt-3 space-y-4">
-                    {agg.tips.length ? (
-                      <div>
-                        <div className="text-sm font-semibold">Tipps</div>
-                        <ul className="mt-2 space-y-1 text-sm text-black/70">
-                          {agg.tips.slice(0, 3).map((t, i) => (
-                            <li key={i}>• {t}</li>
-                          ))}
-                        </ul>
-                        <Link className="mt-2 inline-block text-sm underline" href={`/grounds/${ground.slug}/tips`}>
-                          Mehr Tipps
-                        </Link>
-                      </div>
-                    ) : null}
-
-                    {agg.arrival.length ? (
-                      <div>
-                        <div className="text-sm font-semibold">Anreise</div>
-                        <ul className="mt-2 space-y-1 text-sm text-black/70">
-                          {agg.arrival.slice(0, 2).map((t, i) => (
-                            <li key={i}>• {t}</li>
-                          ))}
-                        </ul>
-                        <Link className="mt-2 inline-block text-sm underline" href={`/grounds/${ground.slug}/arrival`}>
-                          Anreise ansehen
-                        </Link>
-                      </div>
-                    ) : null}
-
-                    {agg.ticketing.length ? (
-                      <div>
-                        <div className="text-sm font-semibold">Tickets</div>
-                        <ul className="mt-2 space-y-1 text-sm text-black/70">
-                          {agg.ticketing.slice(0, 2).map((t, i) => (
-                            <li key={i}>• {t}</li>
-                          ))}
-                        </ul>
-                        <Link className="mt-2 inline-block text-sm underline" href={`/grounds/${ground.slug}/tickets`}>
-                          Tickets ansehen
-                        </Link>
-                      </div>
-                    ) : null}
+                  <div className="mt-4 space-y-3">
+                    {reviews.slice(0, 3).map((r) => (
+                      <article
+                        key={r.id}
+                        className="overflow-hidden rounded-2xl border border-black/10 bg-black/[0.02]"
+                      >
+                        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-black/10 bg-white/60 px-4 py-3">
+                          <div className="text-sm font-semibold">
+                            {new Date(r.visit_date).toLocaleDateString("de-DE")}
+                            {r.match ? ` — ${r.match}` : ""}
+                          </div>
+                          <div className="text-sm text-black/70">{r.rating} / 5</div>
+                        </div>
+                        <div className="space-y-3 px-4 py-4 text-sm text-black/75">
+                          {r.arrival ? (
+                            <div>
+                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                                Anreise
+                              </div>
+                              <div className="mt-1 whitespace-pre-line">{r.arrival}</div>
+                            </div>
+                          ) : null}
+                          {r.ticketing ? (
+                            <div>
+                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                                Ticketkauf
+                              </div>
+                              <div className="mt-1 whitespace-pre-line">{r.ticketing}</div>
+                            </div>
+                          ) : null}
+                          {r.payments ? (
+                            <div>
+                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                                Zahlung
+                              </div>
+                              <div className="mt-1 whitespace-pre-line">{r.payments}</div>
+                            </div>
+                          ) : null}
+                          {r.food_drink ? (
+                            <div>
+                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                                Bier & Essen
+                              </div>
+                              <div className="mt-1 whitespace-pre-line">{r.food_drink}</div>
+                            </div>
+                          ) : null}
+                          {r.prices ? (
+                            <div>
+                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                                Preise
+                              </div>
+                              <div className="mt-1 whitespace-pre-line">{r.prices}</div>
+                            </div>
+                          ) : null}
+                          {r.atmosphere ? (
+                            <div>
+                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                                Atmosphäre
+                              </div>
+                              <div className="mt-1 whitespace-pre-line">{r.atmosphere}</div>
+                            </div>
+                          ) : null}
+                          {r.condition ? (
+                            <div>
+                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                                Stadionzustand
+                              </div>
+                              <div className="mt-1 whitespace-pre-line">{r.condition}</div>
+                            </div>
+                          ) : null}
+                          {r.safety ? (
+                            <div>
+                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                                Sicherheit
+                              </div>
+                              <div className="mt-1 whitespace-pre-line">{r.safety}</div>
+                            </div>
+                          ) : null}
+                          {r.tips ? (
+                            <div>
+                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                                Tipps
+                              </div>
+                              <div className="mt-1 whitespace-pre-line">{r.tips}</div>
+                            </div>
+                          ) : null}
+                        </div>
+                      </article>
+                    ))}
                   </div>
                 )}
               </div>

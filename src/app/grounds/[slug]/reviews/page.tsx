@@ -15,9 +15,19 @@ type Ground = {
 
 type Review = {
   id: string;
+  created_at?: string;
   visit_date: string;
   match: string | null;
+  competition?: string | null;
   rating: number;
+  arrival: string | null;
+  ticketing: string | null;
+  payments: string | null;
+  food_drink: string | null;
+  prices: string | null;
+  condition: string | null;
+  atmosphere: string | null;
+  safety: string | null;
   tips: string | null;
 };
 
@@ -68,7 +78,9 @@ export default function GroundReviewsPage() {
 
       const { data: r, error: re } = await supabase
         .from("reviews")
-        .select("id,visit_date,match,rating,tips")
+        .select(
+          "id,created_at,visit_date,match,competition,rating,arrival,ticketing,payments,food_drink,prices,condition,atmosphere,safety,tips"
+        )
         .eq("ground_id", (g as any).id)
         .eq("hidden", false)
         .order("visit_date", { ascending: false });
@@ -137,19 +149,118 @@ export default function GroundReviewsPage() {
                 </div>
               </div>
             ) : (
-              <div className="mt-4 space-y-3">
+              <div className="mt-4 space-y-4">
                 {reviews.map((r) => (
-                  <article key={r.id} className="rounded-xl border border-black/10 bg-black/[0.02] p-4">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <div className="text-sm font-semibold">
-                        {new Date(r.visit_date).toLocaleDateString("de-DE")}
-                        {r.match ? ` — ${r.match}` : ""}
+                  <article key={r.id} className="overflow-hidden rounded-2xl border border-black/10 bg-white">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-black/10 bg-black/[0.02] px-5 py-4">
+                      <div>
+                        <div className="text-sm font-semibold">
+                          {new Date(r.visit_date).toLocaleDateString("de-DE")}
+                          {r.match ? ` — ${r.match}` : ""}
+                        </div>
+                        {r.competition ? (
+                          <div className="mt-1 text-xs text-black/55">{r.competition}</div>
+                        ) : null}
                       </div>
-                      <div className="text-sm text-black/70">{r.rating} / 5</div>
+                      <div className="rounded-full bg-blue-900 px-3 py-1 text-sm font-semibold text-white">
+                        {r.rating} / 5
+                      </div>
                     </div>
-                    {r.tips ? <p className="mt-2 text-sm text-black/70">💡 {r.tips}</p> : null}
-                    <div className="mt-3 flex justify-end">
-                      <ReportReviewButton reviewId={r.id} />
+
+                    <div className="space-y-4 px-5 py-5">
+                      {r.arrival ? (
+                        <div>
+                          <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                            Anreise
+                          </div>
+                          <div className="mt-1 text-sm text-black/75 whitespace-pre-line">{r.arrival}</div>
+                        </div>
+                      ) : null}
+
+                      {r.ticketing || r.payments ? (
+                        <div className="grid gap-4 md:grid-cols-2">
+                          {r.ticketing ? (
+                            <div>
+                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                                Ticketkauf
+                              </div>
+                              <div className="mt-1 text-sm text-black/75 whitespace-pre-line">{r.ticketing}</div>
+                            </div>
+                          ) : null}
+                          {r.payments ? (
+                            <div>
+                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                                Zahlung
+                              </div>
+                              <div className="mt-1 text-sm text-black/75 whitespace-pre-line">{r.payments}</div>
+                            </div>
+                          ) : null}
+                        </div>
+                      ) : null}
+
+                      {r.food_drink || r.prices ? (
+                        <div className="grid gap-4 md:grid-cols-2">
+                          {r.food_drink ? (
+                            <div>
+                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                                Bier & Essen
+                              </div>
+                              <div className="mt-1 text-sm text-black/75 whitespace-pre-line">{r.food_drink}</div>
+                            </div>
+                          ) : null}
+                          {r.prices ? (
+                            <div>
+                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                                Preise
+                              </div>
+                              <div className="mt-1 text-sm text-black/75 whitespace-pre-line">{r.prices}</div>
+                            </div>
+                          ) : null}
+                        </div>
+                      ) : null}
+
+                      {r.condition || r.atmosphere ? (
+                        <div className="grid gap-4 md:grid-cols-2">
+                          {r.condition ? (
+                            <div>
+                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                                Stadionzustand
+                              </div>
+                              <div className="mt-1 text-sm text-black/75 whitespace-pre-line">{r.condition}</div>
+                            </div>
+                          ) : null}
+                          {r.atmosphere ? (
+                            <div>
+                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                                Atmosphäre
+                              </div>
+                              <div className="mt-1 text-sm text-black/75 whitespace-pre-line">{r.atmosphere}</div>
+                            </div>
+                          ) : null}
+                        </div>
+                      ) : null}
+
+                      {r.safety ? (
+                        <div>
+                          <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                            Sicherheit
+                          </div>
+                          <div className="mt-1 text-sm text-black/75 whitespace-pre-line">{r.safety}</div>
+                        </div>
+                      ) : null}
+
+                      {r.tips ? (
+                        <div>
+                          <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                            Tipps
+                          </div>
+                          <div className="mt-1 text-sm text-black/75 whitespace-pre-line">{r.tips}</div>
+                        </div>
+                      ) : null}
+
+                      <div className="flex justify-end pt-2">
+                        <ReportReviewButton reviewId={r.id} />
+                      </div>
                     </div>
                   </article>
                 ))}
