@@ -47,6 +47,12 @@ export default function CreateReviewPage() {
   const [payments, setPayments] = useState<string>("");
   const [foodDrink, setFoodDrink] = useState<string>("");
   const [prices, setPrices] = useState<string>("");
+
+  // Smart inputs (MVP): build a prices text line from structured fields.
+  const [beerSize, setBeerSize] = useState<string>("0.5");
+  const [beerPrice, setBeerPrice] = useState<string>("");
+  const [waterPrice, setWaterPrice] = useState<string>("");
+  const [sausagePrice, setSausagePrice] = useState<string>("");
   const [condition, setCondition] = useState<string>("");
   const [atmosphere, setAtmosphere] = useState<string>("");
   const [safety, setSafety] = useState<string>("");
@@ -122,6 +128,18 @@ export default function CreateReviewPage() {
       setPayments(row.payments ?? "");
       setFoodDrink(row.food_drink ?? "");
       setPrices(row.prices ?? "");
+
+      // Best-effort parse existing prices text into smart fields (optional, may fail silently)
+      const text = (row.prices ?? "").replace(/,/g, ".");
+      const beer = text.match(/Bier\s*\((0\.3|0\.5)\)\s*:\s*(\d+(?:\.\d+)?)/i);
+      if (beer) {
+        setBeerSize(beer[1]);
+        setBeerPrice(beer[2]);
+      }
+      const water = text.match(/Wasser\s*:\s*(\d+(?:\.\d+)?)/i);
+      if (water) setWaterPrice(water[1]);
+      const sausage = text.match(/Bratwurst\s*:\s*(\d+(?:\.\d+)?)/i);
+      if (sausage) setSausagePrice(sausage[1]);
       setCondition(row.condition ?? "");
       setAtmosphere(row.atmosphere ?? "");
       setSafety(row.safety ?? "");
@@ -403,16 +421,90 @@ export default function CreateReviewPage() {
                   className="w-full rounded-xl border border-black/10 bg-white px-4 py-2"
                 />
               </label>
-              <label className="grid gap-2 text-sm text-black/70">
-                Preise
-                <textarea
-                  value={prices}
-                  onChange={(e) => setPrices(e.target.value)}
-                  placeholder="Bier, Bratwurst, Wasser… (gerne konkrete Zahlen)"
-                  rows={2}
-                  className="w-full rounded-xl border border-black/10 bg-white px-4 py-2"
-                />
-              </label>
+
+              <div className="rounded-2xl border border-black/10 bg-black/[0.02] p-4">
+                <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                  Preise (schnell)
+                </div>
+                <div className="mt-3 grid gap-3 md:grid-cols-2">
+                  <label className="grid gap-2 text-sm text-black/70">
+                    Biergröße
+                    <select
+                      value={beerSize}
+                      onChange={(e) => setBeerSize(e.target.value)}
+                      className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                    >
+                      <option value="0.5">0,5 l</option>
+                      <option value="0.3">0,3 l</option>
+                    </select>
+                  </label>
+                  <label className="grid gap-2 text-sm text-black/70">
+                    Bierpreis (€)
+                    <input
+                      value={beerPrice}
+                      onChange={(e) => setBeerPrice(e.target.value)}
+                      inputMode="decimal"
+                      placeholder="z.B. 5.50"
+                      className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                    />
+                  </label>
+                  <label className="grid gap-2 text-sm text-black/70">
+                    Wasser/Softdrink (€)
+                    <input
+                      value={waterPrice}
+                      onChange={(e) => setWaterPrice(e.target.value)}
+                      inputMode="decimal"
+                      placeholder="z.B. 3.00"
+                      className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                    />
+                  </label>
+                  <label className="grid gap-2 text-sm text-black/70">
+                    Bratwurst (€)
+                    <input
+                      value={sausagePrice}
+                      onChange={(e) => setSausagePrice(e.target.value)}
+                      inputMode="decimal"
+                      placeholder="z.B. 4.00"
+                      className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                    />
+                  </label>
+                </div>
+
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const parts: string[] = [];
+                      const norm = (s: string) => s.trim().replace(/,/g, ".");
+                      const bp = norm(beerPrice);
+                      const wp = norm(waterPrice);
+                      const sp = norm(sausagePrice);
+                      if (bp) parts.push(`Bier (${beerSize}): ${bp}€`);
+                      if (wp) parts.push(`Wasser: ${wp}€`);
+                      if (sp) parts.push(`Bratwurst: ${sp}€`);
+                      const line = parts.join(" · ");
+                      setPrices(line);
+                    }}
+                    className="rounded-xl bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-black/[0.03]"
+                  >
+                    In „Preise“ übernehmen
+                  </button>
+                  <div className="text-xs text-black/50 self-center">
+                    Tipp: Komma oder Punkt ist ok. Wir speichern als Text im MVP.
+                  </div>
+                </div>
+
+                <label className="mt-4 grid gap-2 text-sm text-black/70">
+                  Preise (Text)
+                  <textarea
+                    value={prices}
+                    onChange={(e) => setPrices(e.target.value)}
+                    placeholder="Optional: weitere Preise/Details"
+                    rows={2}
+                    className="w-full rounded-xl border border-black/10 bg-white px-4 py-2"
+                  />
+                </label>
+              </div>
               <div className="grid gap-3 md:grid-cols-2">
                 <label className="grid gap-2 text-sm text-black/70">
                   Stadionzustand
