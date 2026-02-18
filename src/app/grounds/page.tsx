@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { GroundsMap } from "@/components/maps/GroundsMap";
 import { useEffect, useMemo, useState } from "react";
@@ -18,9 +19,17 @@ type Ground = {
   lng: number | null;
 };
 
+type PhotoRow = {
+  ground_id: string;
+  storage_bucket: string;
+  storage_path: string;
+  created_at: string;
+};
+
 export default function GroundsPage() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [items, setItems] = useState<Ground[]>([]);
+  const [thumbs, setThumbs] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -51,8 +60,42 @@ export default function GroundsPage() {
       if (error) {
         setError(error.message);
         setItems([]);
-      } else {
-        setItems((data as Ground[]) ?? []);
+        setThumbs({});
+        setLoading(false);
+        return;
+      }
+
+      const grounds = (data as Ground[]) ?? [];
+      setItems(grounds);
+
+      // Load latest photo per ground (for cards)
+      try {
+        const ids = grounds.map((g) => g.id);
+        if (ids.length) {
+          const { data: p } = await supabase
+            .from("photos")
+            .select("ground_id,storage_bucket,storage_path,created_at")
+            .in("ground_id", ids)
+            .eq("hidden", false)
+            .order("created_at", { ascending: false })
+            .limit(400);
+
+          const rows = ((p as PhotoRow[]) ?? []).slice();
+          const map: Record<string, string> = {};
+          for (const row of rows) {
+            if (map[row.ground_id]) continue; // keep newest
+            const { data: u } = supabase.storage
+              .from(row.storage_bucket)
+              .getPublicUrl(row.storage_path);
+            map[row.ground_id] = u.publicUrl;
+          }
+          setThumbs(map);
+        } else {
+          setThumbs({});
+        }
+      } catch {
+        // ignore thumbnail errors (non-critical)
+        setThumbs({});
       }
 
       setLoading(false);
@@ -118,16 +161,51 @@ export default function GroundsPage() {
                 <Link
                   key={g.id}
                   href={`/grounds/${g.slug}`}
-                  className="rounded-2xl border border-black/10 bg-white p-5 transition hover:bg-black/[0.02]"
+                  className="group overflow-hidden rounded-2xl border border-black/10 bg-white transition hover:bg-black/[0.02]"
                 >
-                  <div className="text-lg font-semibold">{g.name}</div>
-                  <div className="mt-1 text-sm text-black/70">
-                    {[g.city, g.country].filter(Boolean).join(" · ")}
-                    {g.club ? ` — ${g.club}` : ""}
-                  </div>
-                  <div className="mt-1 text-xs text-black/50">
-                    {g.league ? `Liga: ${g.league}` : ""}
-                    {g.capacity ? ` · Kapazität: ${g.capacity.toLocaleString("de-DE")}` : ""}
+                  {thumbs[g.id] ? (
+                    <div className="relative aspect-[16/9]">
+                      <Image
+                        src={thumbs[g.id]}
+                        alt={g.name}
+                        fill
+                        className="object-cover transition group-hover:scale-[1.02]"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 p-4">
+                        <div className="text-lg font-semibold text-white drop-shadow">
+                          {g.name}
+                        </div>
+                        <div className="mt-1 text-sm text-white/85">
+                          {[g.city, g.country].filter(Boolean).join(" · ")}
+                          {g.club ? ` — ${g.club}` : ""}
+                        </div>
+                      </div>
+                    </div>
+                  ) : null}
+
+                  <div className="p-5">
+                    {!thumbs[g.id] ? (
+                      <>
+                        <div className="text-lg font-semibold">{g.name}</div>
+                        <div className="mt-1 text-sm text-black/70">
+                          {[g.city, g.country].filter(Boolean).join(" · ")}
+                          {g.club ? ` — ${g.club}` : ""}
+                        </div>
+                      </>
+                    ) : null}
+
+                    <div className={`text-xs text-black/50 ${thumbs[g.id] ? "mt-1" : "mt-2"}`}>
+                      {g.league ? `Liga: ${g.league}` : ""}
+                      {g.capacity ? ` · Kapazität: ${g.capacity.toLocaleString("de-DE")}` : ""}
+                    </div>
+
+                    {!thumbs[g.id] ? (
+                      <div className="mt-3 text-xs text-black/40">
+                        Noch kein Bild – füge eins über ein Review hinzu.
+                      </div>
+                    ) : null}
                   </div>
                 </Link>
               ))}

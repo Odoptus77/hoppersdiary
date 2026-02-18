@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
@@ -48,6 +49,7 @@ export default function GroundDetailPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [heroUrl, setHeroUrl] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -85,6 +87,29 @@ export default function GroundDetailPage() {
       }
 
       setGround(g as Ground);
+
+      // Load newest visible photo for hero image
+      try {
+        const { data: p } = await supabase
+          .from("photos")
+          .select("storage_bucket,storage_path")
+          .eq("ground_id", (g as any).id)
+          .eq("hidden", false)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (p) {
+          const { data: u } = supabase.storage
+            .from((p as any).storage_bucket)
+            .getPublicUrl((p as any).storage_path);
+          setHeroUrl(u.publicUrl);
+        } else {
+          setHeroUrl(null);
+        }
+      } catch {
+        setHeroUrl(null);
+      }
 
       const { data: r, error: re } = await supabase
         .from("reviews")
@@ -131,6 +156,38 @@ export default function GroundDetailPage() {
         <div className="text-sm text-red-700">{error}</div>
       ) : !ground ? null : (
         <>
+          {heroUrl ? (
+            <div className="relative overflow-hidden rounded-3xl border border-black/10 bg-black/[0.03]">
+              <div className="relative aspect-[16/7] w-full">
+                <Image
+                  src={heroUrl}
+                  alt={ground.name}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 1200px"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+                  <div className="text-xs font-medium uppercase tracking-[0.28em] text-white/80">
+                    Neuestes Foto
+                  </div>
+                  <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+                    <div className="text-2xl font-semibold tracking-tight text-white drop-shadow md:text-3xl">
+                      {ground.name}
+                    </div>
+                    <Link
+                      href={`/grounds/${ground.slug}/photos`}
+                      className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-slate-900 hover:bg-white/90"
+                    >
+                      Alle Bilder
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : null}
+
           <header className="space-y-4">
             <div className="text-sm text-black/60">
               <Link className="hover:underline" href="/grounds">
