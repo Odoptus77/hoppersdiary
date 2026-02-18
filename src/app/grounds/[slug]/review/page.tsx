@@ -44,6 +44,7 @@ export default function CreateReviewPage() {
   const [competition, setCompetition] = useState<string>("");
   const [arrival, setArrival] = useState<string>("");
   const [ticketing, setTicketing] = useState<string>("");
+  const [ticketUrl, setTicketUrl] = useState<string>("");
   const [payments, setPayments] = useState<string>("");
   const [foodDrink, setFoodDrink] = useState<string>("");
   const [prices, setPrices] = useState<string>("");
@@ -125,6 +126,10 @@ export default function CreateReviewPage() {
       setCompetition(row.competition ?? "");
       setArrival(row.arrival ?? "");
       setTicketing(row.ticketing ?? "");
+
+      // Best-effort parse a ticket URL from the ticketing text.
+      const turl = (row.ticketing ?? "").match(/https?:\/\/\S+/i);
+      if (turl) setTicketUrl(turl[0]);
       setPayments(row.payments ?? "");
       setFoodDrink(row.food_drink ?? "");
       setPrices(row.prices ?? "");
@@ -383,16 +388,42 @@ export default function CreateReviewPage() {
                   className="w-full rounded-xl border border-black/10 bg-white px-4 py-2"
                 />
               </label>
-              <label className="grid gap-2 text-sm text-black/70">
-                Ticketkauf
-                <textarea
-                  value={ticketing}
-                  onChange={(e) => setTicketing(e.target.value)}
-                  placeholder="Wo kaufen? Print@home? Abendkasse? Probleme?"
-                  rows={3}
-                  className="w-full rounded-xl border border-black/10 bg-white px-4 py-2"
-                />
-              </label>
+              <div className="grid gap-3">
+                <label className="grid gap-2 text-sm text-black/70">
+                  Ticket-Link (optional)
+                  <input
+                    value={ticketUrl}
+                    onChange={(e) => setTicketUrl(e.target.value)}
+                    inputMode="url"
+                    placeholder="https://…"
+                    className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                  />
+                </label>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const u = ticketUrl.trim();
+                    if (!u) return;
+                    const prefix = ticketing.trim() ? ticketing.trim() + "\n\n" : "";
+                    setTicketing(prefix + `Ticket-Link: ${u}`);
+                  }}
+                  className="w-fit rounded-xl bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-black/[0.03]"
+                >
+                  In „Ticketkauf“ übernehmen
+                </button>
+
+                <label className="grid gap-2 text-sm text-black/70">
+                  Ticketkauf
+                  <textarea
+                    value={ticketing}
+                    onChange={(e) => setTicketing(e.target.value)}
+                    placeholder="Wo kaufen? Print@home? Abendkasse? Probleme?"
+                    rows={3}
+                    className="w-full rounded-xl border border-black/10 bg-white px-4 py-2"
+                  />
+                </label>
+              </div>
               <label className="grid gap-2 text-sm text-black/70">
                 Zahlungsmöglichkeiten
                 <textarea
