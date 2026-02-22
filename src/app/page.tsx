@@ -32,11 +32,12 @@ export default async function Home() {
 
   let latestReviews: LatestReview[] = [];
   let latestPhotos: (LatestPhoto & { url: string })[] = [];
+  let topGrounds: { id: string; name: string; slug: string; city: string | null; country: string; count: number }[] = [];
   let groundsCount: number | null = null;
   let reviewsCount: number | null = null;
 
   if (supabase) {
-    const [gCount, rCount, rLatest, pLatest] = await Promise.all([
+    const [gCount, rCount, rLatest, pLatest, rAll] = await Promise.all([
       supabase.from("grounds").select("id", { count: "exact", head: true }).eq("published", true),
       supabase.from("reviews").select("id", { count: "exact", head: true }).eq("hidden", false),
       supabase
@@ -55,6 +56,13 @@ export default async function Home() {
         .eq("hidden", false)
         .order("created_at", { ascending: false })
         .limit(8),
+      // MVP approximation for "this week": take newest 500 reviews and compute in-app.
+      supabase
+        .from("reviews")
+        .select("ground_id,created_at, ground:grounds(id,slug,name,city,country)")
+        .eq("hidden", false)
+        .order("created_at", { ascending: false })
+        .limit(500),
     ]);
 
     groundsCount = gCount.count ?? null;
@@ -67,6 +75,42 @@ export default async function Home() {
       const { data } = supabase.storage.from(row.storage_bucket).getPublicUrl(row.storage_path);
       return { ...(row as any), url: data.publicUrl };
     });
+
+    // Compute top grounds this week (client-side from last 500 reviews)
+    const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    const all = ((rAll.data as any[]) ?? []).filter((x) => {
+      const ts = new Date(x.created_at).getTime();
+      return Number.isFinite(ts) && ts >= weekAgo;
+    });
+
+    const byGround = new Map<
+      string,
+      { id: string; name: string; slug: string; city: string | null; country: string; count: number }
+    >();
+
+    for (const row of all) {
+      const g = row.ground;
+      const gid = row.ground_id as string | undefined;
+      if (!gid || !g) continue;
+
+      const curr = byGround.get(gid);
+      if (!curr) {
+        byGround.set(gid, {
+          id: g.id,
+          name: g.name,
+          slug: g.slug,
+          city: g.city ?? null,
+          country: g.country,
+          count: 1,
+        });
+      } else {
+        curr.count += 1;
+      }
+    }
+
+    topGrounds = Array.from(byGround.values())
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 6);
   }
 
   return (
@@ -219,6 +263,53 @@ export default async function Home() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* TOP GROUNDS THIS WEEK */}
+      <section className="space-y-4">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
+              Community
+            </div>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight">Top Grounds diese Woche</h2>
+            <p className="mt-2 text-sm text-black/65">
+              Welche Stadien wurden zuletzt am meisten reviewed (letzte 7 Tage).
+            </p>
+          </div>
+          <Link href="/grounds" className="text-sm font-semibold underline">
+            Alle Grounds
+          </Link>
+        </div>
+
+        {topGrounds.length === 0 ? (
+          <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-black/70">
+            Noch nicht genug Daten für diese Woche.
+          </div>
+        ) : (
+          <div className="grid gap-3 md:grid-cols-2">
+            {topGrounds.map((g) => (
+              <Link
+                key={g.id}
+                href={`/grounds/${g.slug}`}
+                className="rounded-2xl border border-black/10 bg-white p-6 transition hover:bg-black/[0.02]"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="text-lg font-semibold">{g.name}</div>
+                    <div className="mt-1 text-sm text-black/70">
+                      {[g.city, g.country].filter(Boolean).join(" · ")}
+                    </div>
+                  </div>
+                  <div className="rounded-full bg-blue-900 px-3 py-1 text-sm font-semibold text-white">
+                    {g.count}
+                  </div>
+                </div>
+                <div className="mt-2 text-xs text-black/50">Reviews in den letzten 7 Tagen</div>
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* LATEST REVIEWS */}
