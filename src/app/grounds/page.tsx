@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { GroundsMap } from "@/components/maps/GroundsMap";
+// Map view removed for now
 import { useEffect, useMemo, useState } from "react";
 
 type Ground = {
@@ -117,7 +117,7 @@ export default function GroundsPage() {
         <div className="text-sm text-black/55">{items.length} Grounds</div>
       </header>
 
-      <div className="grid gap-6 md:grid-cols-[1fr_420px]">
+      <div className="grid gap-6">
         {/* Left: list */}
         <div className="space-y-4">
           <div className="flex flex-col gap-3 rounded-2xl border border-black/10 bg-white p-4 md:flex-row md:items-center">
@@ -213,23 +213,7 @@ export default function GroundsPage() {
           )}
         </div>
 
-        {/* Right: map */}
-        <aside className="space-y-3">
-          <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
-            Karte
-          </div>
-          <GroundsMap
-            pins={items
-              .filter((g) => typeof g.lat === "number" && typeof g.lng === "number")
-              .map((g) => ({
-                id: g.id,
-                name: g.name,
-                slug: g.slug,
-                lat: g.lat as number,
-                lng: g.lng as number,
-              }))}
-          />
-        </aside>
+        {/* Map view removed (Mapbox debugging later) */}
       </div>
     </div>
   );
