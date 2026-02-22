@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useEffect, useMemo, useState } from "react";
 
@@ -23,9 +24,17 @@ type Ground = {
   country: string;
 };
 
+type PhotoRow = {
+  ground_id: string;
+  storage_bucket: string;
+  storage_path: string;
+  created_at: string;
+};
+
 export default function ReviewsPage() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [items, setItems] = useState<(Review & { ground: Ground | null })[]>([]);
+  const [thumbs, setThumbs] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -67,6 +76,35 @@ export default function ReviewsPage() {
       if (minRating > 0) rows = rows.filter((r) => (r.rating ?? 0) >= minRating);
 
       setItems(rows);
+
+      // Thumbnails: newest visible photo per ground
+      try {
+        const ids = Array.from(new Set(rows.map((r) => r.ground_id).filter(Boolean)));
+        if (ids.length) {
+          const { data: p } = await supabase
+            .from("photos")
+            .select("ground_id,storage_bucket,storage_path,created_at")
+            .in("ground_id", ids)
+            .eq("hidden", false)
+            .order("created_at", { ascending: false })
+            .limit(400);
+
+          const map: Record<string, string> = {};
+          for (const row of ((p as PhotoRow[]) ?? []) as PhotoRow[]) {
+            if (map[row.ground_id]) continue;
+            const { data: u } = supabase.storage
+              .from(row.storage_bucket)
+              .getPublicUrl(row.storage_path);
+            map[row.ground_id] = u.publicUrl;
+          }
+          setThumbs(map);
+        } else {
+          setThumbs({});
+        }
+      } catch {
+        setThumbs({});
+      }
+
       setLoading(false);
     }
 
@@ -75,11 +113,14 @@ export default function ReviewsPage() {
 
   return (
     <div className="space-y-6">
-      <header className="space-y-2">
-        <h1 className="text-3xl font-semibold">Neueste Reviews</h1>
-        <p className="text-black/70">
-          Feed der aktuellsten Stadion-Erfahrungen. (MVP: 50 letzte Einträge)
-        </p>
+      <header className="flex flex-wrap items-end justify-between gap-3">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-semibold tracking-tight">Review-Feed</h1>
+          <p className="text-sm text-black/65">
+            Die neuesten Stadion-Erfahrungen aus der Community (MVP: letzte 50).
+          </p>
+        </div>
+        <div className="text-sm text-black/55">{items.length} Reviews</div>
       </header>
 
       <div className="flex flex-col gap-3 rounded-2xl border border-black/10 bg-white p-4 md:flex-row md:items-center">
@@ -137,44 +178,89 @@ export default function ReviewsPage() {
           </div>
         </div>
       ) : (
-        <div className="grid gap-3">
-          {items.map((r) => (
-            <article key={r.id} className="rounded-2xl border border-black/10 bg-white p-6">
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <div>
-                  <div className="text-sm text-black/60">
-                    {new Date(r.visit_date).toLocaleDateString("de-DE")}
-                    {r.competition ? ` · ${r.competition}` : ""}
+        <div className="grid gap-4 md:grid-cols-2">
+          {items.map((r) => {
+            const g = r.ground;
+            const href = g ? `/grounds/${g.slug}/reviews` : "/grounds";
+            const thumb = thumbs[r.ground_id];
+
+            return (
+              <Link
+                key={r.id}
+                href={href}
+                className="group overflow-hidden rounded-2xl border border-black/10 bg-white transition hover:bg-black/[0.02]"
+              >
+                {thumb ? (
+                  <div className="relative aspect-[16/9]">
+                    <Image
+                      src={thumb}
+                      alt={g?.name ?? "Ground"}
+                      fill
+                      className="object-cover transition group-hover:scale-[1.02]"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <div className="text-lg font-semibold text-white drop-shadow">
+                        {g?.name ?? "(Ground)"}
+                      </div>
+                      <div className="mt-1 text-sm text-white/85">
+                        {[g?.city, g?.country].filter(Boolean).join(" · ")}
+                        {r.match ? ` — ${r.match}` : ""}
+                      </div>
+                    </div>
+                    <div className="absolute right-4 top-4 rounded-full bg-blue-900 px-3 py-1 text-sm font-semibold text-white">
+                      {r.rating} / 5
+                    </div>
                   </div>
-                  <div className="mt-1 text-lg font-semibold">
-                    {r.ground ? (
-                      <Link className="hover:underline" href={`/grounds/${r.ground.slug}`}>
-                        {r.ground.name}
-                      </Link>
-                    ) : (
-                      "(Ground)"
-                    )}
+                ) : null}
+
+                <div className="space-y-3 p-6">
+                  {!thumb ? (
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <div className="text-lg font-semibold">{g?.name ?? "(Ground)"}</div>
+                        <div className="mt-1 text-sm text-black/70">
+                          {[g?.city, g?.country].filter(Boolean).join(" · ")}
+                          {r.match ? ` — ${r.match}` : ""}
+                        </div>
+                      </div>
+                      <div className="rounded-full bg-blue-900 px-3 py-1 text-sm font-semibold text-white">
+                        {r.rating} / 5
+                      </div>
+                    </div>
+                  ) : null}
+
+                  <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-black/60">
+                    <div>
+                      {new Date(r.visit_date).toLocaleDateString("de-DE")}
+                      {r.competition ? ` · ${r.competition}` : ""}
+                    </div>
+                    <div className="text-xs text-black/45">
+                      {new Date(r.created_at).toLocaleDateString("de-DE")}
+                    </div>
                   </div>
-                  <div className="mt-1 text-sm text-black/70">
-                    {[r.ground?.city, r.ground?.country].filter(Boolean).join(" · ")}
-                    {r.match ? ` — ${r.match}` : ""}
+
+                  {r.tips ? (
+                    <div className="rounded-2xl border border-black/10 bg-black/[0.02] p-4 text-sm text-black/75">
+                      <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                        Quick Tipp
+                      </div>
+                      <div className="mt-1 whitespace-pre-line">{r.tips}</div>
+                    </div>
+                  ) : (
+                    <div className="text-sm text-black/55">
+                      Öffnen, um alle Kategorien (Anreise, Tickets, Preise…) zu lesen.
+                    </div>
+                  )}
+
+                  <div className="text-xs text-black/45">
+                    Öffnet: Reviews für diesen Ground
                   </div>
                 </div>
-
-                <div className="rounded-full border border-black/10 bg-black/[0.02] px-3 py-1 text-sm">
-                  {r.rating} / 5
-                </div>
-              </div>
-
-              {r.tips ? (
-                <p className="mt-3 text-sm text-black/70">💡 {r.tips}</p>
-              ) : null}
-
-              <div className="mt-4 text-xs text-black/50">
-                Erstellt: {new Date(r.created_at).toLocaleString("de-DE")}
-              </div>
-            </article>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>
