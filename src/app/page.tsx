@@ -116,7 +116,9 @@ export default async function Home() {
   return (
     <div className="space-y-12">
       {/* HERO */}
-      <section className="rounded-3xl border border-black/10 bg-gradient-to-br from-blue-900 to-slate-900 p-8 text-white md:p-12">
+      <section className="relative overflow-hidden rounded-3xl border border-black/10 bg-gradient-to-br from-blue-900 to-slate-900 p-8 text-white md:p-12">
+        <div className="pointer-events-none absolute -top-24 right-[-120px] h-[420px] w-[420px] rounded-full bg-white/10 blur-2xl" />
+        <div className="pointer-events-none absolute -bottom-28 left-[-140px] h-[520px] w-[520px] rounded-full bg-white/10 blur-2xl" />
         <div className="grid gap-10 md:grid-cols-[1.3fr_1fr] md:items-center">
           <div className="space-y-6">
             <div className="inline-flex items-center gap-2">
@@ -157,6 +159,24 @@ export default async function Home() {
             <div className="text-xs text-white/70">
               Gäste können lesen. Mit Login kannst du Reviews schreiben & Bilder hochladen.
             </div>
+
+            <div className="flex flex-wrap gap-2 pt-2">
+              <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white/85">
+                Anreise
+              </span>
+              <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white/85">
+                Tickets
+              </span>
+              <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white/85">
+                Zahlung
+              </span>
+              <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white/85">
+                Preise
+              </span>
+              <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white/85">
+                Fotos
+              </span>
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -190,27 +210,47 @@ export default async function Home() {
       </section>
 
       {/* HOW IT WORKS */}
-      <section className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl border border-black/10 bg-white p-6">
-          <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">1</div>
-          <div className="mt-2 text-xl font-semibold">Ground auswählen</div>
-          <p className="mt-2 text-sm text-black/70">
-            Finde Stadien nach Land, Stadt, Liga oder Verein.
-          </p>
+      <section className="space-y-4">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
+              So funktioniert’s
+            </div>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight">Schnell reinfinden.</h2>
+          </div>
+          <Link href="/grounds" className="text-sm font-semibold underline">
+            Direkt zu den Grounds
+          </Link>
         </div>
-        <div className="rounded-2xl border border-black/10 bg-white p-6">
-          <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">2</div>
-          <div className="mt-2 text-xl font-semibold">Praktische Infos lesen</div>
-          <p className="mt-2 text-sm text-black/70">
-            Anreise, Ticketkauf, Zahlung, Preise – gesammelt aus Reviews.
-          </p>
-        </div>
-        <div className="rounded-2xl border border-black/10 bg-white p-6">
-          <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">3</div>
-          <div className="mt-2 text-xl font-semibold">Zur Community beitragen</div>
-          <p className="mt-2 text-sm text-black/70">
-            Pro Besuch ein Review + Fotos. Moderation hält’s sauber.
-          </p>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="rounded-2xl border border-black/10 bg-white p-6">
+            <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-900 text-sm font-semibold text-white">
+              1
+            </div>
+            <div className="mt-3 text-xl font-semibold">Ground auswählen</div>
+            <p className="mt-2 text-sm text-black/70">
+              Finde Stadien nach Land, Stadt, Liga oder Verein.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-black/10 bg-white p-6">
+            <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-900 text-sm font-semibold text-white">
+              2
+            </div>
+            <div className="mt-3 text-xl font-semibold">Praktische Infos lesen</div>
+            <p className="mt-2 text-sm text-black/70">
+              Anreise, Ticketkauf, Zahlung, Preise – gesammelt aus Reviews.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-black/10 bg-white p-6">
+            <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-900 text-sm font-semibold text-white">
+              3
+            </div>
+            <div className="mt-3 text-xl font-semibold">Beitrag leisten</div>
+            <p className="mt-2 text-sm text-black/70">
+              Pro Besuch ein Review + Fotos. Moderation hält’s sauber.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -267,7 +307,7 @@ export default async function Home() {
       </section>
 
       {/* TOP GROUNDS THIS WEEK */}
-      <section className="space-y-4">
+      <section className="space-y-4 rounded-3xl border border-black/10 bg-white p-8 md:p-10">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
@@ -314,7 +354,7 @@ export default async function Home() {
       </section>
 
       {/* LATEST REVIEWS */}
-      <section className="space-y-4">
+      <section className="space-y-4 rounded-3xl border border-black/10 bg-black/[0.02] p-8 md:p-10">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
@@ -363,7 +403,7 @@ export default async function Home() {
       </section>
 
       {/* LATEST PHOTOS */}
-      <section className="space-y-4">
+      <section className="space-y-4 rounded-3xl border border-black/10 bg-white p-8 md:p-10">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
