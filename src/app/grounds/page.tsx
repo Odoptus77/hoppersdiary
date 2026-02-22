@@ -156,59 +156,66 @@ export default function GroundsPage() {
               Noch keine veröffentlichten Grounds in dieser Auswahl.
             </div>
           ) : (
-            <div className="grid gap-3">
-              {items.map((g) => (
-                <Link
-                  key={g.id}
-                  href={`/grounds/${g.slug}`}
-                  className="group overflow-hidden rounded-2xl border border-black/10 bg-white transition hover:bg-black/[0.02]"
-                >
-                  {thumbs[g.id] ? (
-                    <div className="relative aspect-[16/9]">
-                      <Image
-                        src={thumbs[g.id]}
-                        alt={g.name}
-                        fill
-                        className="object-cover transition group-hover:scale-[1.02]"
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {items.map((g) => {
+                const thumb = thumbs[g.id];
+                const meta1 = [g.city, g.country].filter(Boolean).join(" · ");
+                const meta2 = g.club ? g.club : null;
+
+                return (
+                  <Link
+                    key={g.id}
+                    href={`/grounds/${g.slug}`}
+                    className="group overflow-hidden rounded-3xl border border-black/10 bg-white transition hover:bg-black/[0.02]"
+                  >
+                    <div className="relative aspect-[16/10] bg-black/[0.03]">
+                      {thumb ? (
+                        <Image
+                          src={thumb}
+                          alt={g.name}
+                          fill
+                          className="object-cover transition group-hover:scale-[1.02]"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        />
+                      ) : null}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+
                       <div className="absolute bottom-0 left-0 right-0 p-4">
                         <div className="text-lg font-semibold text-white drop-shadow">
                           {g.name}
                         </div>
                         <div className="mt-1 text-sm text-white/85">
-                          {[g.city, g.country].filter(Boolean).join(" · ")}
-                          {g.club ? ` — ${g.club}` : ""}
+                          {meta1}
+                          {meta2 ? ` — ${meta2}` : ""}
                         </div>
                       </div>
-                    </div>
-                  ) : null}
 
-                  <div className="p-5">
-                    {!thumbs[g.id] ? (
-                      <>
-                        <div className="text-lg font-semibold">{g.name}</div>
-                        <div className="mt-1 text-sm text-black/70">
-                          {[g.city, g.country].filter(Boolean).join(" · ")}
-                          {g.club ? ` — ${g.club}` : ""}
-                        </div>
-                      </>
-                    ) : null}
-
-                    <div className={`text-xs text-black/50 ${thumbs[g.id] ? "mt-1" : "mt-2"}`}>
-                      {g.league ? `Liga: ${g.league}` : ""}
-                      {g.capacity ? ` · Kapazität: ${g.capacity.toLocaleString("de-DE")}` : ""}
-                    </div>
-
-                    {!thumbs[g.id] ? (
-                      <div className="mt-3 text-xs text-black/40">
-                        Noch kein Bild – füge eins über ein Review hinzu.
+                      <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+                        {g.league ? (
+                          <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900">
+                            {g.league}
+                          </span>
+                        ) : null}
+                        {g.capacity ? (
+                          <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900">
+                            {g.capacity.toLocaleString("de-DE")}
+                          </span>
+                        ) : null}
                       </div>
-                    ) : null}
-                  </div>
-                </Link>
-              ))}
+                    </div>
+
+                    <div className="p-5">
+                      {!thumb ? (
+                        <div className="text-sm text-black/55">
+                          Noch kein Bild – füge eins über ein Review hinzu.
+                        </div>
+                      ) : (
+                        <div className="text-sm text-black/55">Öffnen</div>
+                      )}
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           )}
         </div>
