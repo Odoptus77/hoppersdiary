@@ -214,26 +214,33 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* COMMUNITY */}
+      {/* GUIDELINES */}
       <section className="rounded-3xl border border-black/10 bg-black/[0.03] p-8 md:p-10">
-        <div className="grid gap-8 md:grid-cols-[1fr_1fr]">
+        <div className="grid gap-8 md:grid-cols-[1fr_1fr] md:items-center">
           <div>
             <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
-              Community-Gedanke
+              Schnell mitmachen
             </div>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight">
-              Das ist kein Blog – das ist ein gemeinsames Nachschlagewerk.
+              Ein Review dauert 2–3 Minuten.
             </h2>
             <p className="mt-3 text-sm text-black/70">
-              Je mehr Leute kurze, praktische Reviews schreiben, desto besser wird die Planung für
-              alle: Wo ist der Gästeblock? Nur Cash? Welche Eingänge sind entspannt?
+              Je praktischer, desto besser: Anreise, Ticketkauf, Zahlung, Preise. Fotos helfen enorm.
             </p>
 
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              <Stat label="Praktisch statt lang" value="Kurz" />
-              <Stat label="Pro Besuch ein Review" value="1x" />
-              <Stat label="Fotos helfen" value="📷" />
-              <Stat label="Respektvoll" value="Fair" />
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link
+                href="/grounds"
+                className="rounded-full bg-blue-900 px-5 py-2.5 text-sm font-semibold text-white"
+              >
+                Ground auswählen
+              </Link>
+              <Link
+                href="/login"
+                className="rounded-full border border-black/10 bg-white px-5 py-2.5 text-sm font-semibold text-black hover:bg-black/[0.03]"
+              >
+                Login
+              </Link>
             </div>
           </div>
 
@@ -247,16 +254,10 @@ export default async function Home() {
               <li>• Fotos: bitte eigene Aufnahmen, keine fremden Wasserzeichen</li>
               <li>• Melden statt streiten: Reports gehen in die Moderation</li>
             </ul>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link
-                href="/login"
-                className="rounded-full bg-blue-900 px-5 py-2.5 text-sm font-semibold text-white"
-              >
-                Login
-              </Link>
+            <div className="mt-6">
               <Link
                 href="/suggest"
-                className="rounded-full border border-black/10 bg-white px-5 py-2.5 text-sm font-semibold text-black hover:bg-black/[0.03]"
+                className="inline-flex rounded-full border border-black/10 bg-white px-5 py-2.5 text-sm font-semibold text-black hover:bg-black/[0.03]"
               >
                 Ground vorschlagen
               </Link>
