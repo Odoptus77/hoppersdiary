@@ -224,58 +224,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* GUIDELINES */}
-      <section className="rounded-3xl border border-border/50 bg-muted/30 p-8 md:p-10">
-        <div className="grid gap-8 md:grid-cols-[1fr_1fr] md:items-center">
-          <div>
-            <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
-              Schnell mitmachen
-            </div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
-              Ein Review dauert 2–3 Minuten.
-            </h2>
-            <p className="mt-3 text-sm text-muted-foreground">
-              Je praktischer, desto besser: Anreise, Ticketkauf, Zahlung, Preise. Fotos helfen enorm.
-            </p>
-
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link
-                href="/grounds"
-                className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
-              >
-                Ground auswählen
-              </Link>
-              <Link
-                href="/login"
-                className="rounded-full border border-border/50 bg-card px-5 py-2.5 text-sm font-semibold text-foreground hover:bg-muted"
-              >
-                Login
-              </Link>
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-border/50 bg-card p-6">
-            <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
-              Leitlinien
-            </div>
-            <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-              <li>• Fokus auf Anreise/Tickets/Preise – was hätte dir geholfen?</li>
-              <li>• Keine persönlichen Daten / keine Gewaltverherrlichung</li>
-              <li>• Fotos: bitte eigene Aufnahmen, keine fremden Wasserzeichen</li>
-              <li>• Melden statt streiten: Reports gehen in die Moderation</li>
-            </ul>
-            <div className="mt-6">
-              <Link
-                href="/suggest"
-                className="inline-flex rounded-full border border-border/50 bg-card px-5 py-2.5 text-sm font-semibold text-foreground hover:bg-muted"
-              >
-                Ground vorschlagen
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* TOP GROUNDS THIS WEEK */}
       <section className="space-y-4 rounded-3xl border border-border/50 bg-card p-8 md:p-10">
         <div className="flex flex-wrap items-end justify-between gap-3">
