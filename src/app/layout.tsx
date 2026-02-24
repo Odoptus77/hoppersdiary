@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { MobileBottomNav } from "@/components/AppNav";
@@ -49,14 +50,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="de">
+    <html lang="de" suppressHydrationWarning>
       <body className={`${inter.className} antialiased`}>
-        <div className="min-h-dvh bg-white text-black">
-          <SiteHeader />
-          <main className="mx-auto max-w-6xl px-4 py-8 pb-24 md:py-10">{children}</main>
-          <SiteFooter />
-          <MobileBottomNav />
-        </div>
+        <ThemeProvider>
+          <div className="min-h-dvh bg-gradient-to-br from-white via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 text-foreground transition-colors duration-300">
+            <SiteHeader />
+            <main className="mx-auto max-w-6xl px-4 py-6 pb-28 md:py-10 md:pb-12">
+              <div className="animate-fade-in">
+                {children}
+              </div>
+            </main>
+            <SiteFooter />
+            <MobileBottomNav />
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );
