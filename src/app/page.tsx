@@ -179,51 +179,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
-      <section className="space-y-4">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
-              So funktioniert's
-            </div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">Schnell reinfinden.</h2>
-          </div>
-          <Link href="/grounds" className="text-sm font-semibold text-primary hover:underline">
-            Direkt zu den Grounds
-          </Link>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl border border-border/50 bg-card p-6">
-            <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-primary text-sm font-semibold text-primary-foreground">
-              1
-            </div>
-            <div className="mt-3 text-xl font-semibold text-foreground">Ground auswählen</div>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Finde Stadien nach Land, Stadt, Liga oder Verein.
-            </p>
-          </div>
-          <div className="rounded-2xl border border-border/50 bg-card p-6">
-            <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-primary text-sm font-semibold text-primary-foreground">
-              2
-            </div>
-            <div className="mt-3 text-xl font-semibold text-foreground">Praktische Infos lesen</div>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Anreise, Ticketkauf, Zahlung, Preise – gesammelt aus Reviews.
-            </p>
-          </div>
-          <div className="rounded-2xl border border-border/50 bg-card p-6">
-            <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-primary text-sm font-semibold text-primary-foreground">
-              3
-            </div>
-            <div className="mt-3 text-xl font-semibold text-foreground">Beitrag leisten</div>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Pro Besuch ein Review + Fotos. Moderation hält's sauber.
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* TOP GROUNDS THIS WEEK */}
       <section className="space-y-4 rounded-3xl border border-border/50 bg-card p-8 md:p-10">
         <div className="flex flex-wrap items-end justify-between gap-3">
