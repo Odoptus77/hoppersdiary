@@ -20,9 +20,9 @@ type LatestPhoto = {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-black/10 bg-white p-5">
-      <div className="text-2xl font-semibold tracking-tight">{value}</div>
-      <div className="mt-1 text-sm text-black/65">{label}</div>
+    <div className="rounded-2xl border border-border/50 bg-card p-5">
+      <div className="text-2xl font-semibold tracking-tight text-foreground">{value}</div>
+      <div className="mt-1 text-sm text-muted-foreground">{label}</div>
     </div>
   );
 }
@@ -56,7 +56,6 @@ export default async function Home() {
         .eq("hidden", false)
         .order("created_at", { ascending: false })
         .limit(8),
-      // MVP approximation for "this week": take newest 500 reviews and compute in-app.
       supabase
         .from("reviews")
         .select("ground_id,created_at, ground:grounds(id,slug,name,city,country)")
@@ -76,7 +75,6 @@ export default async function Home() {
       return { ...(row as any), url: data.publicUrl };
     });
 
-    // Compute top grounds this week (client-side from last 500 reviews)
     const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
     const all = ((rAll.data as any[]) ?? []).filter((x) => {
       const ts = new Date(x.created_at).getTime();
@@ -116,7 +114,7 @@ export default async function Home() {
   return (
     <div className="space-y-12">
       {/* HERO */}
-      <section className="relative overflow-hidden rounded-3xl border border-black/10 bg-gradient-to-br from-blue-900 to-slate-900 p-8 text-white md:p-12">
+      <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-blue-900 to-slate-900 p-8 text-white md:p-12">
         <div className="pointer-events-none absolute -top-24 right-[-120px] h-[420px] w-[420px] rounded-full bg-white/10 blur-2xl" />
         <div className="pointer-events-none absolute -bottom-28 left-[-140px] h-[520px] w-[520px] rounded-full bg-white/10 blur-2xl" />
         <div className="grid gap-10 md:grid-cols-[1.3fr_1fr] md:items-center">
@@ -213,82 +211,82 @@ export default async function Home() {
       <section className="space-y-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
-              So funktioniert’s
+            <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
+              So funktioniert's
             </div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight">Schnell reinfinden.</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">Schnell reinfinden.</h2>
           </div>
-          <Link href="/grounds" className="text-sm font-semibold underline">
+          <Link href="/grounds" className="text-sm font-semibold text-primary hover:underline">
             Direkt zu den Grounds
           </Link>
         </div>
 
         <div className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl border border-black/10 bg-white p-6">
-            <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-900 text-sm font-semibold text-white">
+          <div className="rounded-2xl border border-border/50 bg-card p-6">
+            <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-primary text-sm font-semibold text-primary-foreground">
               1
             </div>
-            <div className="mt-3 text-xl font-semibold">Ground auswählen</div>
-            <p className="mt-2 text-sm text-black/70">
+            <div className="mt-3 text-xl font-semibold text-foreground">Ground auswählen</div>
+            <p className="mt-2 text-sm text-muted-foreground">
               Finde Stadien nach Land, Stadt, Liga oder Verein.
             </p>
           </div>
-          <div className="rounded-2xl border border-black/10 bg-white p-6">
-            <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-900 text-sm font-semibold text-white">
+          <div className="rounded-2xl border border-border/50 bg-card p-6">
+            <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-primary text-sm font-semibold text-primary-foreground">
               2
             </div>
-            <div className="mt-3 text-xl font-semibold">Praktische Infos lesen</div>
-            <p className="mt-2 text-sm text-black/70">
+            <div className="mt-3 text-xl font-semibold text-foreground">Praktische Infos lesen</div>
+            <p className="mt-2 text-sm text-muted-foreground">
               Anreise, Ticketkauf, Zahlung, Preise – gesammelt aus Reviews.
             </p>
           </div>
-          <div className="rounded-2xl border border-black/10 bg-white p-6">
-            <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-900 text-sm font-semibold text-white">
+          <div className="rounded-2xl border border-border/50 bg-card p-6">
+            <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-primary text-sm font-semibold text-primary-foreground">
               3
             </div>
-            <div className="mt-3 text-xl font-semibold">Beitrag leisten</div>
-            <p className="mt-2 text-sm text-black/70">
-              Pro Besuch ein Review + Fotos. Moderation hält’s sauber.
+            <div className="mt-3 text-xl font-semibold text-foreground">Beitrag leisten</div>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Pro Besuch ein Review + Fotos. Moderation hält's sauber.
             </p>
           </div>
         </div>
       </section>
 
       {/* GUIDELINES */}
-      <section className="rounded-3xl border border-black/10 bg-black/[0.03] p-8 md:p-10">
+      <section className="rounded-3xl border border-border/50 bg-muted/30 p-8 md:p-10">
         <div className="grid gap-8 md:grid-cols-[1fr_1fr] md:items-center">
           <div>
-            <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
+            <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
               Schnell mitmachen
             </div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight">
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
               Ein Review dauert 2–3 Minuten.
             </h2>
-            <p className="mt-3 text-sm text-black/70">
+            <p className="mt-3 text-sm text-muted-foreground">
               Je praktischer, desto besser: Anreise, Ticketkauf, Zahlung, Preise. Fotos helfen enorm.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 href="/grounds"
-                className="rounded-full bg-blue-900 px-5 py-2.5 text-sm font-semibold text-white"
+                className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
               >
                 Ground auswählen
               </Link>
               <Link
                 href="/login"
-                className="rounded-full border border-black/10 bg-white px-5 py-2.5 text-sm font-semibold text-black hover:bg-black/[0.03]"
+                className="rounded-full border border-border/50 bg-card px-5 py-2.5 text-sm font-semibold text-foreground hover:bg-muted"
               >
                 Login
               </Link>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-black/10 bg-white p-6">
-            <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
+          <div className="rounded-2xl border border-border/50 bg-card p-6">
+            <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
               Leitlinien
             </div>
-            <ul className="mt-3 space-y-2 text-sm text-black/70">
+            <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
               <li>• Fokus auf Anreise/Tickets/Preise – was hätte dir geholfen?</li>
               <li>• Keine persönlichen Daten / keine Gewaltverherrlichung</li>
               <li>• Fotos: bitte eigene Aufnahmen, keine fremden Wasserzeichen</li>
@@ -297,7 +295,7 @@ export default async function Home() {
             <div className="mt-6">
               <Link
                 href="/suggest"
-                className="inline-flex rounded-full border border-black/10 bg-white px-5 py-2.5 text-sm font-semibold text-black hover:bg-black/[0.03]"
+                className="inline-flex rounded-full border border-border/50 bg-card px-5 py-2.5 text-sm font-semibold text-foreground hover:bg-muted"
               >
                 Ground vorschlagen
               </Link>
@@ -307,24 +305,24 @@ export default async function Home() {
       </section>
 
       {/* TOP GROUNDS THIS WEEK */}
-      <section className="space-y-4 rounded-3xl border border-black/10 bg-white p-8 md:p-10">
+      <section className="space-y-4 rounded-3xl border border-border/50 bg-card p-8 md:p-10">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
+            <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
               Community
             </div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight">Top Grounds diese Woche</h2>
-            <p className="mt-2 text-sm text-black/65">
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">Top Grounds diese Woche</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
               Welche Stadien wurden zuletzt am meisten reviewed (letzte 7 Tage).
             </p>
           </div>
-          <Link href="/grounds" className="text-sm font-semibold underline">
+          <Link href="/grounds" className="text-sm font-semibold text-primary hover:underline">
             Alle Grounds
           </Link>
         </div>
 
         {topGrounds.length === 0 ? (
-          <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-black/70">
+          <div className="rounded-2xl border border-border/50 bg-muted/30 p-6 text-sm text-muted-foreground">
             Noch nicht genug Daten für diese Woche.
           </div>
         ) : (
@@ -333,20 +331,20 @@ export default async function Home() {
               <Link
                 key={g.id}
                 href={`/grounds/${g.slug}`}
-                className="rounded-2xl border border-black/10 bg-white p-6 transition hover:bg-black/[0.02]"
+                className="rounded-2xl border border-border/50 bg-muted/30 p-6 transition hover:bg-muted"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <div className="text-lg font-semibold">{g.name}</div>
-                    <div className="mt-1 text-sm text-black/70">
+                    <div className="text-lg font-semibold text-foreground">{g.name}</div>
+                    <div className="mt-1 text-sm text-muted-foreground">
                       {[g.city, g.country].filter(Boolean).join(" · ")}
                     </div>
                   </div>
-                  <div className="rounded-full bg-blue-900 px-3 py-1 text-sm font-semibold text-white">
+                  <div className="rounded-full bg-primary px-3 py-1 text-sm font-semibold text-primary-foreground">
                     {g.count}
                   </div>
                 </div>
-                <div className="mt-2 text-xs text-black/50">Reviews in den letzten 7 Tagen</div>
+                <div className="mt-2 text-xs text-muted-foreground">Reviews in den letzten 7 Tagen</div>
               </Link>
             ))}
           </div>
@@ -354,21 +352,21 @@ export default async function Home() {
       </section>
 
       {/* LATEST REVIEWS */}
-      <section className="space-y-4 rounded-3xl border border-black/10 bg-black/[0.02] p-8 md:p-10">
+      <section className="space-y-4 rounded-3xl border border-border/50 bg-muted/20 p-8 md:p-10">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
+            <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
               Aktivität
             </div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight">Neueste Reviews</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">Neueste Reviews</h2>
           </div>
-          <Link href="/reviews" className="text-sm font-semibold underline">
+          <Link href="/reviews" className="text-sm font-semibold text-primary hover:underline">
             Alle Reviews
           </Link>
         </div>
 
         {latestReviews.length === 0 ? (
-          <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-black/70">
+          <div className="rounded-2xl border border-border/50 bg-card p-6 text-sm text-muted-foreground">
             Noch keine Reviews.
           </div>
         ) : (
@@ -377,22 +375,22 @@ export default async function Home() {
               <Link
                 key={r.id}
                 href={r.ground ? `/grounds/${r.ground.slug}/reviews` : "/grounds"}
-                className="rounded-2xl border border-black/10 bg-white p-6 transition hover:bg-black/[0.02]"
+                className="rounded-2xl border border-border/50 bg-card p-6 transition hover:bg-muted"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <div className="text-sm text-black/60">
+                    <div className="text-sm text-muted-foreground">
                       {new Date(r.visit_date).toLocaleDateString("de-DE")}
                       {r.match ? ` · ${r.match}` : ""}
                     </div>
-                    <div className="mt-1 text-lg font-semibold">
+                    <div className="mt-1 text-lg font-semibold text-foreground">
                       {r.ground?.name ?? "(Ground)"}
                     </div>
-                    <div className="mt-1 text-sm text-black/70">
+                    <div className="mt-1 text-sm text-muted-foreground">
                       {[r.ground?.city, r.ground?.country].filter(Boolean).join(" · ")}
                     </div>
                   </div>
-                  <div className="rounded-full bg-blue-900 px-3 py-1 text-sm font-semibold text-white">
+                  <div className="rounded-full bg-primary px-3 py-1 text-sm font-semibold text-primary-foreground">
                     {r.rating} / 5
                   </div>
                 </div>
@@ -403,21 +401,21 @@ export default async function Home() {
       </section>
 
       {/* LATEST PHOTOS */}
-      <section className="space-y-4 rounded-3xl border border-black/10 bg-white p-8 md:p-10">
+      <section className="space-y-4 rounded-3xl border border-border/50 bg-card p-8 md:p-10">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
+            <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
               Galerie
             </div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight">Neueste Bilder</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">Neueste Bilder</h2>
           </div>
-          <Link href="/grounds" className="text-sm font-semibold underline">
+          <Link href="/grounds" className="text-sm font-semibold text-primary hover:underline">
             Zu den Grounds
           </Link>
         </div>
 
         {latestPhotos.length === 0 ? (
-          <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-black/70">
+          <div className="rounded-2xl border border-border/50 bg-muted/30 p-6 text-sm text-muted-foreground">
             Noch keine Bilder.
           </div>
         ) : (
@@ -426,7 +424,7 @@ export default async function Home() {
               <Link
                 key={p.id}
                 href={p.ground ? `/grounds/${p.ground.slug}/photos` : "/grounds"}
-                className="group overflow-hidden rounded-2xl border border-black/10 bg-white"
+                className="group overflow-hidden rounded-2xl border border-border/50 bg-muted/30"
               >
                 <div className="relative aspect-[4/3]">
                   <Image
@@ -438,8 +436,8 @@ export default async function Home() {
                   />
                 </div>
                 <div className="p-3">
-                  <div className="text-sm font-semibold truncate">{p.ground?.name ?? "(Ground)"}</div>
-                  <div className="mt-1 text-xs text-black/50">
+                  <div className="text-sm font-semibold truncate text-foreground">{p.ground?.name ?? "(Ground)"}</div>
+                  <div className="mt-1 text-xs text-muted-foreground">
                     {new Date(p.created_at).toLocaleDateString("de-DE")}
                   </div>
                 </div>
@@ -450,24 +448,24 @@ export default async function Home() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="rounded-3xl border border-black/10 bg-white p-8 md:p-10">
+      <section className="rounded-3xl border border-border/50 bg-card p-8 md:p-10">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <div className="text-sm font-semibold">Neu hier?</div>
-            <div className="mt-1 text-sm text-black/70">
+            <div className="text-sm font-semibold text-foreground">Neu hier?</div>
+            <div className="mt-1 text-sm text-muted-foreground">
               Login per Magic Link – keine Registrierung, kein Passwort.
             </div>
           </div>
           <div className="flex flex-wrap gap-3">
             <Link
               href="/login"
-              className="rounded-full bg-blue-900 px-6 py-3 text-sm font-semibold text-white"
+              className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
             >
               Login
             </Link>
             <Link
               href="/grounds"
-              className="rounded-full border border-black/10 bg-white px-6 py-3 text-sm font-semibold text-black hover:bg-black/[0.03]"
+              className="rounded-full border border-border/50 bg-muted/30 px-6 py-3 text-sm font-semibold text-foreground hover:bg-muted"
             >
               Grounds ansehen
             </Link>
