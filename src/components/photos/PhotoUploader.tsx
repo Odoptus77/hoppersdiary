@@ -65,7 +65,7 @@ export function PhotoUploader({ groundId, reviewId }: { groundId: string; review
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-black/70">
+      <label className="block text-sm font-medium text-muted-foreground">
         Bilder hochladen
       </label>
       <input
@@ -76,10 +76,10 @@ export function PhotoUploader({ groundId, reviewId }: { groundId: string; review
         onChange={onChange}
         className="block w-full text-sm"
       />
-      {uploading ? <div className="text-sm text-black/70">Lade hoch…</div> : null}
+      {uploading ? <div className="text-sm text-muted-foreground">Lade hoch…</div> : null}
       {status ? <div className="text-sm text-green-800">{status}</div> : null}
       {error ? <div className="text-sm text-red-700">{error}</div> : null}
-      <div className="text-xs text-black/50">
+      <div className="text-xs text-muted-foreground">
         Hinweis: Upload erfordert Login. Bilder sind öffentlich sichtbar und können gemeldet werden.
       </div>
     </div>

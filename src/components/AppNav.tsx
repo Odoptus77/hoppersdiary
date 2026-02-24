@@ -42,7 +42,7 @@ export function AppNav() {
   const path = usePathname();
 
   return (
-    <nav className="flex items-center gap-1 rounded-2xl bg-black/[0.02] p-1 dark:bg-white/[0.02]">
+    <nav className="flex items-center gap-1 rounded-2xl bg-muted/30 p-1 dark:bg-white/[0.02]">
       {navItems.map((item) => {
         const active = isActive(path, item.href);
         return (
@@ -52,8 +52,8 @@ export function AppNav() {
             className={`
               group relative flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-200
               ${active 
-                ? "bg-white text-blue-600 shadow-sm dark:bg-white/10 dark:text-blue-400" 
-                : "text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white"
+                ? "bg-white text-blue-600 shadow-sm dark:bg-muted/50 dark:text-blue-400" 
+                : "text-muted-foreground hover:text-foreground dark:text-white/60 dark:hover:text-white"
               }
             `}
           >
@@ -99,7 +99,7 @@ export function MobileBottomNav() {
                 flex flex-col items-center gap-1 rounded-xl px-1 py-2 transition-all
                 ${active 
                   ? "text-blue-600 dark:text-blue-400" 
-                  : "text-black/50 dark:text-white/50"
+                  : "text-muted-foreground dark:text-white/50"
                 }
               `}
             >

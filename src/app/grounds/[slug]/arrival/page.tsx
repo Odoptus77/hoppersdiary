@@ -90,13 +90,13 @@ export default function GroundArrivalPage() {
   return (
     <div className="space-y-6">
       {loading ? (
-        <div className="text-sm text-black/70">Lade…</div>
+        <div className="text-sm text-muted-foreground">Lade…</div>
       ) : error ? (
         <div className="text-sm text-red-700">{error}</div>
       ) : !ground ? null : (
         <>
           <header className="space-y-2">
-            <div className="text-sm text-black/60">
+            <div className="text-sm text-muted-foreground">
               <Link className="hover:underline" href="/grounds">Grounds</Link>
               <span className="mx-2">/</span>
               <Link className="hover:underline" href={`/grounds/${ground.slug}`}>{ground.name}</Link>
@@ -108,9 +108,9 @@ export default function GroundArrivalPage() {
 
           <Tabs items={tabs} />
 
-          <div className="rounded-2xl border border-black/10 bg-white p-6">
+          <div className="rounded-2xl border border-border/50 bg-white p-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
+              <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
                 Aus Reviews
               </div>
               <Link
@@ -122,16 +122,16 @@ export default function GroundArrivalPage() {
             </div>
 
             {items.length === 0 ? (
-              <p className="mt-3 text-sm text-black/70">Noch keine Anreise-Tipps.</p>
+              <p className="mt-3 text-sm text-muted-foreground">Noch keine Anreise-Tipps.</p>
             ) : (
               <div className="mt-4 space-y-4">
                 {items.map((r) => (
-                  <article key={r.id} className="rounded-2xl border border-black/10 bg-black/[0.02] p-5">
+                  <article key={r.id} className="rounded-2xl border border-border/50 bg-muted/30 p-5">
                     <div className="text-sm font-semibold">
                       {new Date(r.visit_date).toLocaleDateString("de-DE")}
                       {r.match ? ` — ${r.match}` : ""}
                     </div>
-                    <div className="mt-2 whitespace-pre-line text-sm text-black/75">{r.arrival}</div>
+                    <div className="mt-2 whitespace-pre-line text-sm text-foreground/75">{r.arrival}</div>
                   </article>
                 ))}
               </div>

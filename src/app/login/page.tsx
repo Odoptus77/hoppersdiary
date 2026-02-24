@@ -61,16 +61,16 @@ export default function LoginPage() {
     <div className="space-y-6">
       <header className="space-y-2">
         <h1 className="text-3xl font-semibold">Login</h1>
-        <p className="text-black/70">Einloggen per Magic Link (E‑Mail).</p>
+        <p className="text-muted-foreground">Einloggen per Magic Link (E‑Mail).</p>
       </header>
 
       {!supabase ? (
-        <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-black/70">
+        <div className="rounded-2xl border border-border/50 bg-white p-6 text-sm text-muted-foreground">
           Supabase ist nicht konfiguriert.
         </div>
       ) : sessionEmail ? (
-        <div className="rounded-2xl border border-black/10 bg-white p-6">
-          <div className="text-sm text-black/70">
+        <div className="rounded-2xl border border-border/50 bg-white p-6">
+          <div className="text-sm text-muted-foreground">
             Eingeloggt als <span className="font-semibold">{sessionEmail}</span>
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
@@ -82,22 +82,22 @@ export default function LoginPage() {
             </Link>
             <Link
               href="/me/reviews"
-              className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+              className="rounded-xl border border-border/50 bg-white px-4 py-2 text-sm"
             >
               Meine Reviews
             </Link>
             <button
               onClick={signOut}
-              className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+              className="rounded-xl border border-border/50 bg-white px-4 py-2 text-sm"
             >
               Abmelden
             </button>
           </div>
         </div>
       ) : (
-        <div className="max-w-xl rounded-2xl border border-black/10 bg-white p-6">
+        <div className="max-w-xl rounded-2xl border border-border/50 bg-white p-6">
           <form onSubmit={sendMagicLink} className="grid gap-3">
-            <label className="grid gap-2 text-sm text-black/70">
+            <label className="grid gap-2 text-sm text-muted-foreground">
               E-Mail
               <input
                 type="email"
@@ -105,7 +105,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@example.com"
-                className="rounded-xl border border-black/10 bg-white px-4 py-3 text-sm outline-none focus:border-black/20"
+                className="rounded-xl border border-border/50 bg-white px-4 py-3 text-sm outline-none focus:border-black/20"
               />
             </label>
             <button
@@ -114,15 +114,15 @@ export default function LoginPage() {
             >
               {sending ? "Sende…" : "Magic Link senden"}
             </button>
-            {status && <p className="text-sm text-black/70">{status}</p>}
-            <p className="text-xs text-black/60">
+            {status && <p className="text-sm text-muted-foreground">{status}</p>}
+            <p className="text-xs text-muted-foreground">
               Hinweis: Falls du nach dem Klick nicht zurückgeleitet wirst, prüfe in Supabase die Redirect-URLs.
             </p>
           </form>
         </div>
       )}
 
-      <div className="text-xs text-black/50">
+      <div className="text-xs text-muted-foreground">
         Admin-Login/Tools bleiben unter <Link className="underline" href="/admin">/admin</Link>.
       </div>
     </div>

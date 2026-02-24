@@ -96,13 +96,13 @@ export default function GroundTipsPage() {
   return (
     <div className="space-y-6">
       {loading ? (
-        <div className="text-sm text-black/70">Lade…</div>
+        <div className="text-sm text-muted-foreground">Lade…</div>
       ) : error ? (
         <div className="text-sm text-red-700">{error}</div>
       ) : !ground ? null : (
         <>
           <header className="space-y-2">
-            <div className="text-sm text-black/60">
+            <div className="text-sm text-muted-foreground">
               <Link className="hover:underline" href="/grounds">Grounds</Link>
               <span className="mx-2">/</span>
               <Link className="hover:underline" href={`/grounds/${ground.slug}`}>{ground.name}</Link>
@@ -115,24 +115,24 @@ export default function GroundTipsPage() {
           <Tabs items={tabs} />
 
           <div className="space-y-4">
-            <div className="rounded-2xl border border-black/10 bg-white p-6">
+            <div className="rounded-2xl border border-border/50 bg-white p-6">
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">Tipps</div>
+                <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">Tipps</div>
                 <Link href={`/grounds/${ground.slug}/review`} className="text-sm font-semibold underline">
                   + Review schreiben
                 </Link>
               </div>
               {tipsItems.length === 0 ? (
-                <p className="mt-3 text-sm text-black/70">Noch keine Tipps vorhanden.</p>
+                <p className="mt-3 text-sm text-muted-foreground">Noch keine Tipps vorhanden.</p>
               ) : (
                 <div className="mt-4 space-y-4">
                   {tipsItems.map((r) => (
-                    <article key={r.id} className="rounded-2xl border border-black/10 bg-black/[0.02] p-5">
+                    <article key={r.id} className="rounded-2xl border border-border/50 bg-muted/30 p-5">
                       <div className="text-sm font-semibold">
                         {new Date(r.visit_date).toLocaleDateString("de-DE")}
                         {r.match ? ` — ${r.match}` : ""}
                       </div>
-                      <div className="mt-2 whitespace-pre-line text-sm text-black/75">{r.tips}</div>
+                      <div className="mt-2 whitespace-pre-line text-sm text-foreground/75">{r.tips}</div>
                     </article>
                   ))}
                 </div>
@@ -140,54 +140,54 @@ export default function GroundTipsPage() {
             </div>
 
             <div className="grid gap-4 md:grid-cols-3">
-              <div className="rounded-2xl border border-black/10 bg-white p-6">
-                <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">Anreise</div>
+              <div className="rounded-2xl border border-border/50 bg-white p-6">
+                <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">Anreise</div>
                 {arrivalItems.length === 0 ? (
-                  <p className="mt-3 text-sm text-black/70">Noch keine Anreise-Tipps.</p>
+                  <p className="mt-3 text-sm text-muted-foreground">Noch keine Anreise-Tipps.</p>
                 ) : (
                   <div className="mt-4 space-y-4">
                     {arrivalItems.map((r) => (
-                      <article key={r.id} className="rounded-2xl border border-black/10 bg-black/[0.02] p-4">
+                      <article key={r.id} className="rounded-2xl border border-border/50 bg-muted/30 p-4">
                         <div className="text-sm font-semibold">
                           {new Date(r.visit_date).toLocaleDateString("de-DE")}
                         </div>
-                        <div className="mt-2 whitespace-pre-line text-sm text-black/75">{r.arrival}</div>
+                        <div className="mt-2 whitespace-pre-line text-sm text-foreground/75">{r.arrival}</div>
                       </article>
                     ))}
                   </div>
                 )}
               </div>
 
-              <div className="rounded-2xl border border-black/10 bg-white p-6">
-                <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">Ticketkauf</div>
+              <div className="rounded-2xl border border-border/50 bg-white p-6">
+                <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">Ticketkauf</div>
                 {ticketItems.length === 0 ? (
-                  <p className="mt-3 text-sm text-black/70">Noch keine Ticketing-Infos.</p>
+                  <p className="mt-3 text-sm text-muted-foreground">Noch keine Ticketing-Infos.</p>
                 ) : (
                   <div className="mt-4 space-y-4">
                     {ticketItems.map((r) => (
-                      <article key={r.id} className="rounded-2xl border border-black/10 bg-black/[0.02] p-4">
+                      <article key={r.id} className="rounded-2xl border border-border/50 bg-muted/30 p-4">
                         <div className="text-sm font-semibold">
                           {new Date(r.visit_date).toLocaleDateString("de-DE")}
                         </div>
-                        <div className="mt-2 whitespace-pre-line text-sm text-black/75">{r.ticketing}</div>
+                        <div className="mt-2 whitespace-pre-line text-sm text-foreground/75">{r.ticketing}</div>
                       </article>
                     ))}
                   </div>
                 )}
               </div>
 
-              <div className="rounded-2xl border border-black/10 bg-white p-6">
-                <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">Preise</div>
+              <div className="rounded-2xl border border-border/50 bg-white p-6">
+                <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">Preise</div>
                 {priceItems.length === 0 ? (
-                  <p className="mt-3 text-sm text-black/70">Noch keine Preis-Infos.</p>
+                  <p className="mt-3 text-sm text-muted-foreground">Noch keine Preis-Infos.</p>
                 ) : (
                   <div className="mt-4 space-y-4">
                     {priceItems.map((r) => (
-                      <article key={r.id} className="rounded-2xl border border-black/10 bg-black/[0.02] p-4">
+                      <article key={r.id} className="rounded-2xl border border-border/50 bg-muted/30 p-4">
                         <div className="text-sm font-semibold">
                           {new Date(r.visit_date).toLocaleDateString("de-DE")}
                         </div>
-                        <div className="mt-2 whitespace-pre-line text-sm text-black/75">{r.prices}</div>
+                        <div className="mt-2 whitespace-pre-line text-sm text-foreground/75">{r.prices}</div>
                       </article>
                     ))}
                   </div>

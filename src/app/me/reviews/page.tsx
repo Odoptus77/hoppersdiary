@@ -87,9 +87,9 @@ export default function MyReviewsPage() {
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <p className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">Mein Konto</p>
+        <p className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">Mein Konto</p>
         <h1 className="text-3xl font-semibold">Meine Reviews</h1>
-        <p className="text-black/70">Übersicht deiner Stadionbesuche inkl. Bearbeiten/Löschen.</p>
+        <p className="text-muted-foreground">Übersicht deiner Stadionbesuche inkl. Bearbeiten/Löschen.</p>
       </header>
 
       <div className="flex flex-wrap gap-2">
@@ -101,16 +101,16 @@ export default function MyReviewsPage() {
         </Link>
         <Link
           href="/reviews"
-          className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+          className="rounded-xl border border-border/50 bg-white px-4 py-2 text-sm"
         >
           Review-Feed
         </Link>
       </div>
 
       {loading ? (
-        <div className="text-sm text-black/70">Lade…</div>
+        <div className="text-sm text-muted-foreground">Lade…</div>
       ) : error ? (
-        <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-red-700">
+        <div className="rounded-2xl border border-border/50 bg-white p-6 text-sm text-red-700">
           {error}
           {error.toLowerCase().includes("einloggen") ? (
             <div className="mt-3">
@@ -121,7 +121,7 @@ export default function MyReviewsPage() {
           ) : null}
         </div>
       ) : items.length === 0 ? (
-        <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-black/70">
+        <div className="rounded-2xl border border-border/50 bg-white p-6 text-sm text-muted-foreground">
           Noch keine Reviews.
           <div className="mt-3">
             <Link
@@ -135,10 +135,10 @@ export default function MyReviewsPage() {
       ) : (
         <div className="grid gap-3">
           {items.map((r) => (
-            <div key={r.id} className="rounded-2xl border border-black/10 bg-white p-6">
+            <div key={r.id} className="rounded-2xl border border-border/50 bg-white p-6">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <div className="text-sm text-black/60">
+                  <div className="text-sm text-muted-foreground">
                     {new Date(r.visit_date).toLocaleDateString("de-DE")}
                     {r.competition ? ` · ${r.competition}` : ""}
                   </div>
@@ -151,27 +151,27 @@ export default function MyReviewsPage() {
                       "(Ground)"
                     )}
                   </div>
-                  <div className="mt-1 text-sm text-black/70">
+                  <div className="mt-1 text-sm text-muted-foreground">
                     {[r.ground?.city, r.ground?.country].filter(Boolean).join(" · ")}
                     {r.match ? ` — ${r.match}` : ""}
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <div className="rounded-full border border-black/10 bg-black/[0.02] px-3 py-1 text-sm">
+                  <div className="rounded-full border border-border/50 bg-muted/30 px-3 py-1 text-sm">
                     {r.rating} / 5
                   </div>
                   {r.ground ? (
                     <Link
                       href={`/grounds/${r.ground.slug}/review?edit=${r.id}`}
-                      className="rounded-xl border border-black/10 bg-white px-3 py-1 text-sm"
+                      className="rounded-xl border border-border/50 bg-white px-3 py-1 text-sm"
                     >
                       Bearbeiten
                     </Link>
                   ) : null}
                   <button
                     onClick={() => remove(r.id)}
-                    className="rounded-xl border border-black/10 bg-white px-3 py-1 text-sm"
+                    className="rounded-xl border border-border/50 bg-white px-3 py-1 text-sm"
                   >
                     Löschen
                   </button>
@@ -179,10 +179,10 @@ export default function MyReviewsPage() {
               </div>
 
               {r.tips ? (
-                <p className="mt-3 text-sm text-black/70">💡 {r.tips}</p>
+                <p className="mt-3 text-sm text-muted-foreground">💡 {r.tips}</p>
               ) : null}
 
-              <div className="mt-4 text-xs text-black/50">
+              <div className="mt-4 text-xs text-muted-foreground">
                 Erstellt: {new Date(r.created_at).toLocaleString("de-DE")}
               </div>
             </div>
@@ -190,7 +190,7 @@ export default function MyReviewsPage() {
         </div>
       )}
 
-      <div className="text-xs text-black/50">
+      <div className="text-xs text-muted-foreground">
         Hinweis: Bearbeiten öffnet aktuell das Review-Formular (Edit-Modus kommt als nächstes).
       </div>
     </div>

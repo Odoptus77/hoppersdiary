@@ -8,7 +8,7 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-black/10 bg-white/50 text-black/70 backdrop-blur transition hover:bg-white hover:text-black dark:border-white/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10 dark:hover:text-white"
+      className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border/50 bg-white/50 text-muted-foreground backdrop-blur transition hover:bg-white hover:text-foreground dark:border-white/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-muted/50 dark:hover:text-white"
       aria-label={resolvedTheme === "dark" ? "Helles Design" : "Dunkles Design"}
       title={resolvedTheme === "dark" ? "Helles Design" : "Dunkles Design"}
     >

@@ -105,13 +105,13 @@ export default function GroundPhotosPage() {
   return (
     <div className="space-y-6">
       {loading ? (
-        <div className="text-sm text-black/70">Lade…</div>
+        <div className="text-sm text-muted-foreground">Lade…</div>
       ) : error ? (
         <div className="text-sm text-red-700">{error}</div>
       ) : !ground ? null : (
         <>
           <header className="space-y-2">
-            <div className="text-sm text-black/60">
+            <div className="text-sm text-muted-foreground">
               <Link className="hover:underline" href="/grounds">Grounds</Link>
               <span className="mx-2">/</span>
               <Link className="hover:underline" href={`/grounds/${ground.slug}`}>{ground.name}</Link>
@@ -124,7 +124,7 @@ export default function GroundPhotosPage() {
           <Tabs items={tabs} />
 
           {photos.length === 0 ? (
-            <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-black/70">
+            <div className="rounded-2xl border border-border/50 bg-white p-6 text-sm text-muted-foreground">
               Noch keine Bilder. Am einfachsten: ein Review schreiben und direkt Fotos hinzufügen.
               <div className="mt-3">
                 <Link
@@ -140,7 +140,7 @@ export default function GroundPhotosPage() {
               {photos.map((ph) => (
                 <div
                   key={ph.id}
-                  className="group overflow-hidden rounded-2xl border border-black/10 bg-white"
+                  className="group overflow-hidden rounded-2xl border border-border/50 bg-white"
                 >
                   <a href={ph.url} target="_blank" rel="noreferrer" className="block">
                     <div className="relative aspect-[4/3]">
@@ -155,7 +155,7 @@ export default function GroundPhotosPage() {
                   </a>
 
                   <div className="flex items-center justify-between gap-2 p-3">
-                    <div className="text-xs text-black/70 truncate">
+                    <div className="text-xs text-muted-foreground truncate">
                       {ph.caption ?? ""}
                     </div>
                     <ReportPhotoButton photoId={ph.id} />
@@ -165,7 +165,7 @@ export default function GroundPhotosPage() {
             </div>
           )}
 
-          <div className="text-xs text-black/50">
+          <div className="text-xs text-muted-foreground">
             Hinweis: Upload folgt als nächster Schritt im Review-Formular + Moderation.
           </div>
         </>

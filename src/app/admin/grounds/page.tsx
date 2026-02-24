@@ -131,23 +131,23 @@ export default function AdminGroundsPage() {
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <p className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">Admin</p>
+        <p className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">Admin</p>
         <h1 className="text-3xl font-semibold">Grounds bearbeiten</h1>
-        <p className="text-black/70">
+        <p className="text-muted-foreground">
           Daten pflegen (Kapazität, Adresse, Liga etc.) und publish/unpublish.
         </p>
       </header>
 
-      <div className="flex flex-col gap-3 rounded-2xl border border-black/10 bg-white p-4 md:flex-row md:items-center">
+      <div className="flex flex-col gap-3 rounded-2xl border border-border/50 bg-white p-4 md:flex-row md:items-center">
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Suche…"
-          className="w-full rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+          className="w-full rounded-xl border border-border/50 bg-white px-4 py-2 text-sm"
         />
         <button
           onClick={load}
-          className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+          className="rounded-xl border border-border/50 bg-white px-4 py-2 text-sm"
         >
           Aktualisieren
         </button>
@@ -160,21 +160,21 @@ export default function AdminGroundsPage() {
       </div>
 
       {loading ? (
-        <div className="text-sm text-black/70">Lade…</div>
+        <div className="text-sm text-muted-foreground">Lade…</div>
       ) : error ? (
         <div className="text-sm text-red-700">{error}</div>
       ) : (
         <div className="grid gap-3">
           {items.map((g) => (
-            <div key={g.id} className="rounded-2xl border border-black/10 bg-white p-5">
+            <div key={g.id} className="rounded-2xl border border-border/50 bg-white p-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <div className="text-lg font-semibold">{g.name}</div>
-                  <div className="mt-1 text-sm text-black/70">
+                  <div className="mt-1 text-sm text-muted-foreground">
                     {[g.city, g.country].filter(Boolean).join(" · ")}
                     {g.club ? ` — ${g.club}` : ""}
                   </div>
-                  <div className="mt-1 text-xs text-black/50">Slug: {g.slug}</div>
+                  <div className="mt-1 text-xs text-muted-foreground">Slug: {g.slug}</div>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
@@ -183,20 +183,20 @@ export default function AdminGroundsPage() {
                     className={`rounded-xl px-4 py-2 text-sm font-semibold ${
                       g.published
                         ? "bg-green-700 text-white"
-                        : "border border-black/10 bg-white text-black"
+                        : "border border-border/50 bg-white text-foreground"
                     }`}
                   >
                     {g.published ? "Published" : "Unpublished"}
                   </button>
                   <button
                     onClick={() => setEditing(g)}
-                    className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+                    className="rounded-xl border border-border/50 bg-white px-4 py-2 text-sm"
                   >
                     Bearbeiten
                   </button>
                   <Link
                     href={`/grounds/${g.slug}`}
-                    className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+                    className="rounded-xl border border-border/50 bg-white px-4 py-2 text-sm"
                   >
                     View
                   </Link>
@@ -209,18 +209,18 @@ export default function AdminGroundsPage() {
 
       {editing ? (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4">
-          <div className="flex w-full max-w-2xl max-h-[85vh] flex-col overflow-hidden rounded-2xl border border-black/10 bg-white">
+          <div className="flex w-full max-w-2xl max-h-[85vh] flex-col overflow-hidden rounded-2xl border border-border/50 bg-white">
             <div className="p-6">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
+                <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
                   Edit
                 </div>
                 <div className="mt-1 text-2xl font-semibold">{editing.name}</div>
               </div>
               <button
                 onClick={() => setEditing(null)}
-                className="rounded-xl border border-black/10 bg-white px-3 py-1 text-sm"
+                className="rounded-xl border border-border/50 bg-white px-3 py-1 text-sm"
               >
                 Schließen
               </button>
@@ -234,7 +234,7 @@ export default function AdminGroundsPage() {
                 <input
                   value={editing.name}
                   onChange={(e) => setEditing({ ...editing, name: e.target.value })}
-                  className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                  className="rounded-xl border border-border/50 bg-white px-4 py-2"
                   placeholder="Name"
                   required
                 />
@@ -243,7 +243,7 @@ export default function AdminGroundsPage() {
                   onChange={(e) =>
                     setEditing({ ...editing, club: e.target.value || null })
                   }
-                  className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                  className="rounded-xl border border-border/50 bg-white px-4 py-2"
                   placeholder="Club"
                 />
               </div>
@@ -254,13 +254,13 @@ export default function AdminGroundsPage() {
                   onChange={(e) =>
                     setEditing({ ...editing, city: e.target.value || null })
                   }
-                  className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                  className="rounded-xl border border-border/50 bg-white px-4 py-2"
                   placeholder="Stadt"
                 />
                 <select
                   value={editing.country}
                   onChange={(e) => setEditing({ ...editing, country: e.target.value })}
-                  className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                  className="rounded-xl border border-border/50 bg-white px-4 py-2"
                 >
                   <option value="DE">DE</option>
                   <option value="AT">AT</option>
@@ -271,7 +271,7 @@ export default function AdminGroundsPage() {
                   onChange={(e) =>
                     setEditing({ ...editing, league: e.target.value || null })
                   }
-                  className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                  className="rounded-xl border border-border/50 bg-white px-4 py-2"
                   placeholder="Liga"
                 />
               </div>
@@ -286,10 +286,10 @@ export default function AdminGroundsPage() {
                     })
                   }
                   inputMode="numeric"
-                  className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                  className="rounded-xl border border-border/50 bg-white px-4 py-2"
                   placeholder="Kapazität"
                 />
-                <label className="flex items-center gap-2 text-sm text-black/70">
+                <label className="flex items-center gap-2 text-sm text-muted-foreground">
                   <input
                     type="checkbox"
                     checked={editing.published}
@@ -304,7 +304,7 @@ export default function AdminGroundsPage() {
                 onChange={(e) =>
                   setEditing({ ...editing, address: e.target.value || null })
                 }
-                className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                className="rounded-xl border border-border/50 bg-white px-4 py-2"
                 placeholder="Adresse"
               />
 
@@ -313,7 +313,7 @@ export default function AdminGroundsPage() {
                 onChange={(e) =>
                   setEditing({ ...(editing as any), ticket_url: e.target.value || null })
                 }
-                className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                className="rounded-xl border border-border/50 bg-white px-4 py-2"
                 placeholder="Ticket-URL (optional)"
               />
 
@@ -322,7 +322,7 @@ export default function AdminGroundsPage() {
                 onChange={(e) =>
                   setEditing({ ...(editing as any), away_section: e.target.value || null })
                 }
-                className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                className="rounded-xl border border-border/50 bg-white px-4 py-2"
                 placeholder="Gästebereich / Away Section (optional)"
               />
 
@@ -332,7 +332,7 @@ export default function AdminGroundsPage() {
                   setEditing({ ...(editing as any), transit_notes: e.target.value || null })
                 }
                 rows={3}
-                className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                className="rounded-xl border border-border/50 bg-white px-4 py-2"
                 placeholder="ÖPNV/Anreise-Notizen (kurz)"
               />
 
@@ -342,12 +342,12 @@ export default function AdminGroundsPage() {
                   setEditing({ ...(editing as any), payment_options: e.target.value || null })
                 }
                 rows={2}
-                className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                className="rounded-xl border border-border/50 bg-white px-4 py-2"
                 placeholder="Zahlungsmöglichkeiten (z.B. Cash, Karte, Apple Pay)"
               />
 
-              <div className="rounded-2xl border border-black/10 bg-black/[0.02] p-4">
-                <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
+              <div className="rounded-2xl border border-border/50 bg-muted/30 p-4">
+                <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
                   Karte (Vorbereitung)
                 </div>
                 <div className="mt-3 grid gap-3">
@@ -356,7 +356,7 @@ export default function AdminGroundsPage() {
                     onChange={(e) =>
                       setEditing({ ...(editing as any), gmaps_url: e.target.value || null })
                     }
-                    className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                    className="rounded-xl border border-border/50 bg-white px-4 py-2"
                     placeholder="Google Maps Link (optional)"
                   />
 
@@ -369,7 +369,7 @@ export default function AdminGroundsPage() {
                           lat: e.target.value ? Number(e.target.value) : null,
                         })
                       }
-                      className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                      className="rounded-xl border border-border/50 bg-white px-4 py-2"
                       placeholder="Latitude"
                       inputMode="decimal"
                     />
@@ -381,7 +381,7 @@ export default function AdminGroundsPage() {
                           lng: e.target.value ? Number(e.target.value) : null,
                         })
                       }
-                      className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                      className="rounded-xl border border-border/50 bg-white px-4 py-2"
                       placeholder="Longitude"
                       inputMode="decimal"
                     />
@@ -397,12 +397,12 @@ export default function AdminGroundsPage() {
                       }
                       setEditing({ ...(editing as any), lat: parsed.lat, lng: parsed.lng });
                     }}
-                    className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+                    className="rounded-xl border border-border/50 bg-white px-4 py-2 text-sm"
                   >
                     Koordinaten aus Google-Maps-Link übernehmen
                   </button>
 
-                  <div className="text-xs text-black/50">
+                  <div className="text-xs text-muted-foreground">
                     Tipp: Google Maps URL mit <code>@lat,lng</code> oder <code>!3dlat!4dlng</code>
                     funktioniert.
                   </div>
@@ -416,12 +416,12 @@ export default function AdminGroundsPage() {
             </form>
             </div>
 
-            <div className="sticky bottom-0 border-t border-black/10 bg-white p-4">
+            <div className="sticky bottom-0 border-t border-border/50 bg-white p-4">
               <div className="flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setEditing(null)}
-                  className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+                  className="rounded-xl border border-border/50 bg-white px-4 py-2 text-sm"
                 >
                   Abbrechen
                 </button>

@@ -85,7 +85,7 @@ export function GroundsMap({ pins }: { pins: GroundPin[] }) {
 
   if (!token) {
     return (
-      <div className="rounded-2xl border border-black/10 bg-white p-4 text-sm text-red-700">
+      <div className="rounded-2xl border border-border/50 bg-white p-4 text-sm text-red-700">
         Mapbox Token fehlt. Setze <code>NEXT_PUBLIC_MAPBOX_TOKEN</code> in Vercel.
       </div>
     );
@@ -93,11 +93,11 @@ export function GroundsMap({ pins }: { pins: GroundPin[] }) {
 
   if (!pins.length) {
     return (
-      <div className="rounded-2xl border border-black/10 bg-white p-4 text-sm text-black/70">
+      <div className="rounded-2xl border border-border/50 bg-white p-4 text-sm text-muted-foreground">
         Keine Koordinaten vorhanden. Füge bei einem Ground lat/lng hinzu, dann erscheinen Pins.
       </div>
     );
   }
 
-  return <div ref={containerRef} className="h-[420px] w-full rounded-2xl border border-black/10" />;
+  return <div ref={containerRef} className="h-[420px] w-full rounded-2xl border border-border/50" />;
 }

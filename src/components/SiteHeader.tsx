@@ -29,7 +29,7 @@ export function SiteHeader() {
         {/* Right - Actions */}
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <div className="h-6 w-px bg-black/10 dark:bg-white/10" />
+          <div className="h-6 w-px bg-black/10 dark:bg-muted/50" />
           <AccountButtons />
         </div>
       </div>

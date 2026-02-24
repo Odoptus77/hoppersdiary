@@ -116,18 +116,18 @@ export default function ReviewsPage() {
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div className="space-y-2">
           <h1 className="text-3xl font-semibold tracking-tight">Review-Feed</h1>
-          <p className="text-sm text-black/65">
+          <p className="text-sm text-muted-foreground">
             Die neuesten Stadion-Erfahrungen aus der Community (MVP: letzte 50).
           </p>
         </div>
-        <div className="text-sm text-black/55">{items.length} Reviews</div>
+        <div className="text-sm text-muted-foreground">{items.length} Reviews</div>
       </header>
 
-      <div className="flex flex-col gap-3 rounded-2xl border border-black/10 bg-white p-4 md:flex-row md:items-center">
+      <div className="flex flex-col gap-3 rounded-2xl border border-border/50 bg-white p-4 md:flex-row md:items-center">
         <select
           value={country}
           onChange={(e) => setCountry(e.target.value)}
-          className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+          className="rounded-xl border border-border/50 bg-white px-4 py-2 text-sm"
         >
           <option value="">Alle Länder</option>
           <option value="DE">Deutschland</option>
@@ -138,7 +138,7 @@ export default function ReviewsPage() {
         <select
           value={minRating}
           onChange={(e) => setMinRating(Number(e.target.value))}
-          className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+          className="rounded-xl border border-border/50 bg-white px-4 py-2 text-sm"
         >
           <option value={0}>Alle Bewertungen</option>
           <option value={5}>Nur 5/5</option>
@@ -156,11 +156,11 @@ export default function ReviewsPage() {
       </div>
 
       {loading ? (
-        <div className="text-sm text-black/70">Lade…</div>
+        <div className="text-sm text-muted-foreground">Lade…</div>
       ) : error ? (
         <div className="text-sm text-red-700">{error}</div>
       ) : items.length === 0 ? (
-        <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-black/70">
+        <div className="rounded-2xl border border-border/50 bg-white p-6 text-sm text-muted-foreground">
           Noch keine Reviews vorhanden.
           <div className="mt-3 flex flex-wrap gap-2">
             <Link
@@ -171,7 +171,7 @@ export default function ReviewsPage() {
             </Link>
             <Link
               href="/suggest"
-              className="inline-flex rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+              className="inline-flex rounded-xl border border-border/50 bg-white px-4 py-2 text-sm"
             >
               Ground vorschlagen
             </Link>
@@ -188,7 +188,7 @@ export default function ReviewsPage() {
               <Link
                 key={r.id}
                 href={href}
-                className="group overflow-hidden rounded-2xl border border-black/10 bg-white transition hover:bg-black/[0.02]"
+                className="group overflow-hidden rounded-2xl border border-border/50 bg-white transition hover:bg-muted/30"
               >
                 {thumb ? (
                   <div className="relative aspect-[16/9]">
@@ -220,7 +220,7 @@ export default function ReviewsPage() {
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <div className="text-lg font-semibold">{g?.name ?? "(Ground)"}</div>
-                        <div className="mt-1 text-sm text-black/70">
+                        <div className="mt-1 text-sm text-muted-foreground">
                           {[g?.city, g?.country].filter(Boolean).join(" · ")}
                           {r.match ? ` — ${r.match}` : ""}
                         </div>
@@ -231,30 +231,30 @@ export default function ReviewsPage() {
                     </div>
                   ) : null}
 
-                  <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-black/60">
+                  <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-muted-foreground">
                     <div>
                       {new Date(r.visit_date).toLocaleDateString("de-DE")}
                       {r.competition ? ` · ${r.competition}` : ""}
                     </div>
-                    <div className="text-xs text-black/45">
+                    <div className="text-xs text-muted-foreground">
                       {new Date(r.created_at).toLocaleDateString("de-DE")}
                     </div>
                   </div>
 
                   {r.tips ? (
-                    <div className="rounded-2xl border border-black/10 bg-black/[0.02] p-4 text-sm text-black/75">
-                      <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                    <div className="rounded-2xl border border-border/50 bg-muted/30 p-4 text-sm text-foreground/75">
+                      <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
                         Quick Tipp
                       </div>
                       <div className="mt-1 whitespace-pre-line">{r.tips}</div>
                     </div>
                   ) : (
-                    <div className="text-sm text-black/55">
+                    <div className="text-sm text-muted-foreground">
                       Öffnen, um alle Kategorien (Anreise, Tickets, Preise…) zu lesen.
                     </div>
                   )}
 
-                  <div className="text-xs text-black/45">
+                  <div className="text-xs text-muted-foreground">
                     Öffnet: Reviews für diesen Ground
                   </div>
                 </div>

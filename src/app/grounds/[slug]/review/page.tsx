@@ -361,7 +361,7 @@ export default function CreateReviewPage() {
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <div className="text-sm text-black/60">
+        <div className="text-sm text-muted-foreground">
           <Link className="hover:underline" href={`/grounds/${slug}`}>
             Zurück zum Ground
           </Link>
@@ -369,48 +369,48 @@ export default function CreateReviewPage() {
         <h1 className="text-3xl font-semibold">
           {editId ? "Review bearbeiten" : "Review schreiben"}
         </h1>
-        <p className="text-black/70">
+        <p className="text-muted-foreground">
           Pro Besuch/Spiel ein Review. Bitte so praktisch wie möglich.
         </p>
         {editId ? (
-          <p className="text-sm text-black/70">
+          <p className="text-sm text-muted-foreground">
             Du bearbeitest ein bestehendes Review.
           </p>
         ) : null}
       </header>
 
       {loadingEdit ? (
-        <div className="text-sm text-black/70">Lade Review…</div>
+        <div className="text-sm text-muted-foreground">Lade Review…</div>
       ) : null}
 
       <form onSubmit={submit} className="max-w-3xl space-y-4">
-        <div className="rounded-2xl border border-black/10 bg-white p-6">
+        <div className="rounded-2xl border border-border/50 bg-white p-6">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
-              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+              <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
                 Basis
               </div>
-              <div className="mt-1 text-sm text-black/60">Das Pflichtprogramm – kurz und klar.</div>
+              <div className="mt-1 text-sm text-muted-foreground">Das Pflichtprogramm – kurz und klar.</div>
             </div>
           </div>
 
           <div className="mt-4 grid gap-3 md:grid-cols-2">
-            <label className="grid gap-2 text-sm text-black/70">
+            <label className="grid gap-2 text-sm text-muted-foreground">
               Besuchsdatum *
               <input
                 type="date"
                 required
                 value={visitDate}
                 onChange={(e) => setVisitDate(e.target.value)}
-                className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                className="rounded-xl border border-border/50 bg-white px-4 py-2"
               />
             </label>
-            <label className="grid gap-2 text-sm text-black/70">
+            <label className="grid gap-2 text-sm text-muted-foreground">
               Bewertung (1–5)
               <select
                 value={rating}
                 onChange={(e) => setRating(Number(e.target.value))}
-                className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                className="rounded-xl border border-border/50 bg-white px-4 py-2"
               >
                 {[5, 4, 3, 2, 1].map((v) => (
                   <option key={v} value={v}>
@@ -422,50 +422,50 @@ export default function CreateReviewPage() {
           </div>
 
           <div className="mt-3 grid gap-3 md:grid-cols-2">
-            <label className="grid gap-2 text-sm text-black/70">
+            <label className="grid gap-2 text-sm text-muted-foreground">
               Spiel (optional)
               <input
                 value={match}
                 onChange={(e) => setMatch(e.target.value)}
                 placeholder="z.B. Hertha vs. HSV"
-                className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                className="rounded-xl border border-border/50 bg-white px-4 py-2"
               />
             </label>
-            <label className="grid gap-2 text-sm text-black/70">
+            <label className="grid gap-2 text-sm text-muted-foreground">
               Wettbewerb (optional)
               <input
                 value={competition}
                 onChange={(e) => setCompetition(e.target.value)}
                 placeholder="Liga/Wettbewerb"
-                className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                className="rounded-xl border border-border/50 bg-white px-4 py-2"
               />
             </label>
           </div>
 
-          <div className="mt-6 border-t border-black/10 pt-6">
-            <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+          <div className="mt-6 border-t border-border/50 pt-6">
+            <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
               Anreise & Tickets
             </div>
             <div className="mt-3 grid gap-3">
-              <label className="grid gap-2 text-sm text-black/70">
+              <label className="grid gap-2 text-sm text-muted-foreground">
                 Anreise
                 <textarea
                   value={arrival}
                   onChange={(e) => setArrival(e.target.value)}
                   placeholder="Parken, ÖPNV, Fantrennung, Einlass…"
                   rows={3}
-                  className="w-full rounded-xl border border-black/10 bg-white px-4 py-2"
+                  className="w-full rounded-xl border border-border/50 bg-white px-4 py-2"
                 />
               </label>
               <div className="grid gap-3">
-                <label className="grid gap-2 text-sm text-black/70">
+                <label className="grid gap-2 text-sm text-muted-foreground">
                   Ticket-Link (optional)
                   <input
                     value={ticketUrl}
                     onChange={(e) => setTicketUrl(e.target.value)}
                     inputMode="url"
                     placeholder="https://…"
-                    className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                    className="rounded-xl border border-border/50 bg-white px-4 py-2"
                   />
                 </label>
 
@@ -477,95 +477,95 @@ export default function CreateReviewPage() {
                     const prefix = ticketing.trim() ? ticketing.trim() + "\n\n" : "";
                     setTicketing(prefix + `Ticket-Link: ${u}`);
                   }}
-                  className="w-fit rounded-xl bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-black/[0.03]"
+                  className="w-fit rounded-xl bg-white px-4 py-2 text-sm font-semibold text-foreground hover:bg-muted/40"
                 >
                   In „Ticketkauf“ übernehmen
                 </button>
 
-                <label className="grid gap-2 text-sm text-black/70">
+                <label className="grid gap-2 text-sm text-muted-foreground">
                   Ticketkauf
                   <textarea
                     value={ticketing}
                     onChange={(e) => setTicketing(e.target.value)}
                     placeholder="Wo kaufen? Print@home? Abendkasse? Probleme?"
                     rows={3}
-                    className="w-full rounded-xl border border-black/10 bg-white px-4 py-2"
+                    className="w-full rounded-xl border border-border/50 bg-white px-4 py-2"
                   />
                 </label>
               </div>
-              <label className="grid gap-2 text-sm text-black/70">
+              <label className="grid gap-2 text-sm text-muted-foreground">
                 Zahlungsmöglichkeiten
                 <textarea
                   value={payments}
                   onChange={(e) => setPayments(e.target.value)}
                   placeholder="Cash, Karte, Apple Pay – und ob überall"
                   rows={2}
-                  className="w-full rounded-xl border border-black/10 bg-white px-4 py-2"
+                  className="w-full rounded-xl border border-border/50 bg-white px-4 py-2"
                 />
               </label>
             </div>
           </div>
 
-          <div className="mt-6 border-t border-black/10 pt-6">
-            <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+          <div className="mt-6 border-t border-border/50 pt-6">
+            <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
               Im Stadion
             </div>
             <div className="mt-3 grid gap-3">
-              <label className="grid gap-2 text-sm text-black/70">
+              <label className="grid gap-2 text-sm text-muted-foreground">
                 Bier & Essen
                 <textarea
                   value={foodDrink}
                   onChange={(e) => setFoodDrink(e.target.value)}
                   placeholder="Qualität, Auswahl, Wartezeit…"
                   rows={3}
-                  className="w-full rounded-xl border border-black/10 bg-white px-4 py-2"
+                  className="w-full rounded-xl border border-border/50 bg-white px-4 py-2"
                 />
               </label>
 
-              <div className="rounded-2xl border border-black/10 bg-black/[0.02] p-4">
-                <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+              <div className="rounded-2xl border border-border/50 bg-muted/30 p-4">
+                <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
                   Preise (schnell)
                 </div>
                 <div className="mt-3 grid gap-3 md:grid-cols-2">
-                  <label className="grid gap-2 text-sm text-black/70">
+                  <label className="grid gap-2 text-sm text-muted-foreground">
                     Biergröße
                     <select
                       value={beerSize}
                       onChange={(e) => setBeerSize(e.target.value)}
-                      className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                      className="rounded-xl border border-border/50 bg-white px-4 py-2"
                     >
                       <option value="0.5">0,5 l</option>
                       <option value="0.3">0,3 l</option>
                     </select>
                   </label>
-                  <label className="grid gap-2 text-sm text-black/70">
+                  <label className="grid gap-2 text-sm text-muted-foreground">
                     Bierpreis (€)
                     <input
                       value={beerPrice}
                       onChange={(e) => setBeerPrice(e.target.value)}
                       inputMode="decimal"
                       placeholder="z.B. 5.50"
-                      className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                      className="rounded-xl border border-border/50 bg-white px-4 py-2"
                     />
                   </label>
-                  <label className="grid gap-2 text-sm text-black/70">
+                  <label className="grid gap-2 text-sm text-muted-foreground">
                     Wasser/Softdrink (€)
                     <input
                       value={waterPrice}
                       onChange={(e) => setWaterPrice(e.target.value)}
                       inputMode="decimal"
                       placeholder="z.B. 3.00"
-                      className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                      className="rounded-xl border border-border/50 bg-white px-4 py-2"
                     />
                   </label>
-                  <label className="grid gap-2 text-sm text-black/70">
+                  <label className="grid gap-2 text-sm text-muted-foreground">
                     Bratwurst (€)
                     <input
                       value={sausagePrice}
                       onChange={(e) => setSausagePrice(e.target.value)}
                       inputMode="decimal"
                       placeholder="z.B. 4.00"
-                      className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                      className="rounded-xl border border-border/50 bg-white px-4 py-2"
                     />
                   </label>
                 </div>
@@ -585,73 +585,73 @@ export default function CreateReviewPage() {
                       const line = parts.join(" · ");
                       setPrices(line);
                     }}
-                    className="rounded-xl bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-black/[0.03]"
+                    className="rounded-xl bg-white px-4 py-2 text-sm font-semibold text-foreground hover:bg-muted/40"
                   >
                     In „Preise“ übernehmen
                   </button>
-                  <div className="text-xs text-black/50 self-center">
+                  <div className="text-xs text-muted-foreground self-center">
                     Tipp: Komma oder Punkt ist ok. Wir speichern als Text im MVP.
                   </div>
                 </div>
 
-                <label className="mt-4 grid gap-2 text-sm text-black/70">
+                <label className="mt-4 grid gap-2 text-sm text-muted-foreground">
                   Preise (Text)
                   <textarea
                     value={prices}
                     onChange={(e) => setPrices(e.target.value)}
                     placeholder="Optional: weitere Preise/Details"
                     rows={2}
-                    className="w-full rounded-xl border border-black/10 bg-white px-4 py-2"
+                    className="w-full rounded-xl border border-border/50 bg-white px-4 py-2"
                   />
                 </label>
               </div>
               <div className="grid gap-3 md:grid-cols-2">
-                <label className="grid gap-2 text-sm text-black/70">
+                <label className="grid gap-2 text-sm text-muted-foreground">
                   Stadionzustand
                   <textarea
                     value={condition}
                     onChange={(e) => setCondition(e.target.value)}
                     placeholder="Sicht, Sitzplätze, Toiletten…"
                     rows={2}
-                    className="w-full rounded-xl border border-black/10 bg-white px-4 py-2"
+                    className="w-full rounded-xl border border-border/50 bg-white px-4 py-2"
                   />
                 </label>
-                <label className="grid gap-2 text-sm text-black/70">
+                <label className="grid gap-2 text-sm text-muted-foreground">
                   Atmosphäre
                   <textarea
                     value={atmosphere}
                     onChange={(e) => setAtmosphere(e.target.value)}
                     placeholder="Support, Stimmung, Sound…"
                     rows={2}
-                    className="w-full rounded-xl border border-black/10 bg-white px-4 py-2"
+                    className="w-full rounded-xl border border-border/50 bg-white px-4 py-2"
                   />
                 </label>
               </div>
-              <label className="grid gap-2 text-sm text-black/70">
+              <label className="grid gap-2 text-sm text-muted-foreground">
                 Sicherheit
                 <textarea
                   value={safety}
                   onChange={(e) => setSafety(e.target.value)}
                   placeholder="Einlass, Ordner, Fantrennung, Polizei…"
                   rows={2}
-                  className="w-full rounded-xl border border-black/10 bg-white px-4 py-2"
+                  className="w-full rounded-xl border border-border/50 bg-white px-4 py-2"
                 />
               </label>
             </div>
           </div>
 
-          <div className="mt-6 border-t border-black/10 pt-6">
-            <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+          <div className="mt-6 border-t border-border/50 pt-6">
+            <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
               Tipps
             </div>
-            <label className="mt-3 grid gap-2 text-sm text-black/70">
+            <label className="mt-3 grid gap-2 text-sm text-muted-foreground">
               Tipps für zukünftige Besucher
               <textarea
                 value={tips}
                 onChange={(e) => setTips(e.target.value)}
                 placeholder="Was sollte man wissen? Beste Plätze? Fanartikel?"
                 rows={3}
-                className="w-full rounded-xl border border-black/10 bg-white px-4 py-2"
+                className="w-full rounded-xl border border-border/50 bg-white px-4 py-2"
               />
             </label>
           </div>
@@ -662,7 +662,7 @@ export default function CreateReviewPage() {
             </button>
             <Link
               href={`/grounds/${slug}`}
-              className="rounded-full border border-black/10 bg-white px-6 py-3 text-sm font-semibold text-black hover:bg-black/[0.03]"
+              className="rounded-full border border-border/50 bg-white px-6 py-3 text-sm font-semibold text-foreground hover:bg-muted/40"
             >
               Abbrechen
             </Link>
@@ -671,23 +671,23 @@ export default function CreateReviewPage() {
           {status && <p className="mt-3 text-sm text-green-800">{status}</p>}
           {error && <p className="mt-3 text-sm text-red-700">{error}</p>}
 
-          <div className="mt-6 border-t border-black/10 pt-6">
+          <div className="mt-6 border-t border-border/50 pt-6">
             <div className="space-y-3">
-              <label className="block text-sm font-medium text-black/70">Bilder</label>
+              <label className="block text-sm font-medium text-muted-foreground">Bilder</label>
 
               {editId ? (
                 <div>
-                  <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                  <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
                     Bereits hochgeladen
                   </div>
                   {reviewPhotos.length === 0 ? (
-                    <div className="mt-2 text-sm text-black/60">Noch keine Bilder.</div>
+                    <div className="mt-2 text-sm text-muted-foreground">Noch keine Bilder.</div>
                   ) : (
                     <div className="mt-3 grid gap-3 sm:grid-cols-2">
                       {reviewPhotos.map((ph) => (
                         <div
                           key={ph.id}
-                          className="overflow-hidden rounded-2xl border border-black/10 bg-white"
+                          className="overflow-hidden rounded-2xl border border-border/50 bg-white"
                         >
                           <a href={ph.url} target="_blank" rel="noreferrer" className="block">
                             <div className="relative aspect-[4/3]">
@@ -705,7 +705,7 @@ export default function CreateReviewPage() {
                               type="button"
                               disabled={deletingPhotoId === ph.id}
                               onClick={() => deletePhoto(ph)}
-                              className="rounded-xl border border-black/10 bg-white px-3 py-1 text-sm hover:bg-black/[0.03] disabled:opacity-60"
+                              className="rounded-xl border border-border/50 bg-white px-3 py-1 text-sm hover:bg-muted/40 disabled:opacity-60"
                             >
                               {deletingPhotoId === ph.id ? "Lösche…" : "Löschen"}
                             </button>
@@ -717,7 +717,7 @@ export default function CreateReviewPage() {
                 </div>
               ) : null}
 
-              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+              <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
                 Neue Bilder hinzufügen
               </div>
               <input
@@ -728,14 +728,14 @@ export default function CreateReviewPage() {
                 onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
                 className="block w-full text-sm"
               />
-              <div className="text-xs text-black/50">
+              <div className="text-xs text-muted-foreground">
                 Du kannst Bilder direkt mit dem Review hochladen. Upload erfolgt beim Speichern.
               </div>
               {files.length ? (
-                <div className="text-xs text-black/60">Ausgewählt: {files.length} Datei(en)</div>
+                <div className="text-xs text-muted-foreground">Ausgewählt: {files.length} Datei(en)</div>
               ) : null}
               {uploadingPhotos ? (
-                <div className="text-sm text-black/70">Bilder werden hochgeladen…</div>
+                <div className="text-sm text-muted-foreground">Bilder werden hochgeladen…</div>
               ) : null}
             </div>
           </div>

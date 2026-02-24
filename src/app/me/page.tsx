@@ -30,18 +30,18 @@ export default function MePage() {
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <p className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">Mein Konto</p>
+        <p className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">Mein Konto</p>
         <h1 className="text-3xl font-semibold">Übersicht</h1>
-        <p className="text-black/70">Deine Reviews, Vorschläge und Login-Status.</p>
+        <p className="text-muted-foreground">Deine Reviews, Vorschläge und Login-Status.</p>
       </header>
 
       {!supabase ? (
-        <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-black/70">
+        <div className="rounded-2xl border border-border/50 bg-white p-6 text-sm text-muted-foreground">
           Supabase ist nicht konfiguriert.
         </div>
       ) : !email ? (
-        <div className="rounded-2xl border border-black/10 bg-white p-6">
-          <div className="text-sm text-black/70">Du bist nicht eingeloggt.</div>
+        <div className="rounded-2xl border border-border/50 bg-white p-6">
+          <div className="text-sm text-muted-foreground">Du bist nicht eingeloggt.</div>
           <div className="mt-4 flex flex-wrap gap-2">
             <Link
               href="/login"
@@ -51,7 +51,7 @@ export default function MePage() {
             </Link>
             <Link
               href="/grounds"
-              className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+              className="rounded-xl border border-border/50 bg-white px-4 py-2 text-sm"
             >
               Grounds ansehen
             </Link>
@@ -59,8 +59,8 @@ export default function MePage() {
         </div>
       ) : (
         <>
-          <div className="rounded-2xl border border-black/10 bg-white p-6">
-            <div className="text-sm text-black/70">
+          <div className="rounded-2xl border border-border/50 bg-white p-6">
+            <div className="text-sm text-muted-foreground">
               Eingeloggt als <span className="font-semibold">{email}</span>
             </div>
             <div className="mt-4 flex flex-wrap gap-2">
@@ -72,13 +72,13 @@ export default function MePage() {
               </Link>
               <Link
                 href="/me/suggestions"
-                className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+                className="rounded-xl border border-border/50 bg-white px-4 py-2 text-sm"
               >
                 Meine Vorschläge
               </Link>
               <button
                 onClick={logout}
-                className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+                className="rounded-xl border border-border/50 bg-white px-4 py-2 text-sm"
               >
                 Logout
               </button>
@@ -88,21 +88,21 @@ export default function MePage() {
           <div className="grid gap-3 md:grid-cols-2">
             <Link
               href="/suggest"
-              className="rounded-2xl border border-black/10 bg-white p-6 transition hover:bg-black/[0.02]"
+              className="rounded-2xl border border-border/50 bg-white p-6 transition hover:bg-muted/30"
             >
               <div className="text-lg font-semibold">Ground vorschlagen</div>
-              <div className="mt-1 text-sm text-black/70">Neuen Ground einreichen (Admin prüft).</div>
+              <div className="mt-1 text-sm text-muted-foreground">Neuen Ground einreichen (Admin prüft).</div>
             </Link>
             <Link
               href="/reviews"
-              className="rounded-2xl border border-black/10 bg-white p-6 transition hover:bg-black/[0.02]"
+              className="rounded-2xl border border-border/50 bg-white p-6 transition hover:bg-muted/30"
             >
               <div className="text-lg font-semibold">Review-Feed</div>
-              <div className="mt-1 text-sm text-black/70">Neueste Reviews der Community.</div>
+              <div className="mt-1 text-sm text-muted-foreground">Neueste Reviews der Community.</div>
             </Link>
           </div>
 
-          <div className="text-xs text-black/50">
+          <div className="text-xs text-muted-foreground">
             Admin-Tools sind nur für Admins sichtbar.
           </div>
         </>

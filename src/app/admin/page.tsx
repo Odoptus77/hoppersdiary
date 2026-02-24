@@ -71,22 +71,22 @@ export default function AdminPage() {
   return (
     <div className="space-y-8">
       <header className="space-y-3">
-        <p className="text-xs uppercase tracking-[0.32em] text-black/60">Admin</p>
+        <p className="text-xs uppercase tracking-[0.32em] text-muted-foreground">Admin</p>
         <h1 className="text-3xl font-semibold">Hoppersdiary Admin</h1>
-        <p className="max-w-2xl text-black/70">
+        <p className="max-w-2xl text-muted-foreground">
           Hier testen wir Supabase Auth (Magic Link). Inhalte/Moderation kommen als nächstes.
         </p>
       </header>
 
       {!supabase ? (
-        <div className="rounded-2xl border border-black/10 bg-black/[0.03] p-6 text-sm text-black/70">
+        <div className="rounded-2xl border border-border/50 bg-muted/40 p-6 text-sm text-muted-foreground">
           Supabase ist noch nicht konfiguriert. Setze in Vercel die Env Vars:
           <code> NEXT_PUBLIC_SUPABASE_URL</code> und <code> NEXT_PUBLIC_SUPABASE_ANON_KEY</code>.
         </div>
       ) : !sessionEmail ? (
-        <div className="max-w-xl rounded-2xl border border-black/10 bg-black/[0.03] p-6">
+        <div className="max-w-xl rounded-2xl border border-border/50 bg-muted/40 p-6">
           <form onSubmit={sendMagicLink} className="grid gap-3">
-            <label className="grid gap-2 text-sm text-black/70">
+            <label className="grid gap-2 text-sm text-muted-foreground">
               E-Mail
               <input
                 type="email"
@@ -94,7 +94,7 @@ export default function AdminPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="nick-thorben@gmx.de"
-                className="rounded-xl border border-black/10 bg-white px-4 py-3 text-sm outline-none focus:border-black/20"
+                className="rounded-xl border border-border/50 bg-white px-4 py-3 text-sm outline-none focus:border-black/20"
               />
             </label>
             <button
@@ -103,44 +103,44 @@ export default function AdminPage() {
             >
               {sending ? "Sende…" : "Magic Link senden"}
             </button>
-            {status && <p className="text-sm text-black/70">{status}</p>}
+            {status && <p className="text-sm text-muted-foreground">{status}</p>}
           </form>
         </div>
       ) : !allowed ? (
-        <div className="rounded-2xl border border-black/10 bg-black/[0.03] p-6">
-          <p className="text-sm text-black/70">
+        <div className="rounded-2xl border border-border/50 bg-muted/40 p-6">
+          <p className="text-sm text-muted-foreground">
             Eingeloggt als <span className="font-semibold">{sessionEmail}</span>, aber nicht erlaubt.
           </p>
-          <p className="mt-2 text-xs text-black/60">
+          <p className="mt-2 text-xs text-muted-foreground">
             Setze <code>NEXT_PUBLIC_ADMIN_EMAIL_ALLOWLIST</code> in Vercel.
           </p>
           <button
             onClick={signOut}
-            className="mt-4 rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+            className="mt-4 rounded-xl border border-border/50 bg-white px-4 py-2 text-sm"
           >
             Abmelden
           </button>
         </div>
       ) : (
-        <div className="rounded-2xl border border-black/10 bg-black/[0.03] p-6">
+        <div className="rounded-2xl border border-border/50 bg-muted/40 p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="text-sm text-black/70">
+            <div className="text-sm text-muted-foreground">
               Eingeloggt als <span className="font-semibold">{sessionEmail}</span>
               {sessionUserId ? (
                 <>
-                  <span className="mx-2 text-black/40">•</span>
+                  <span className="mx-2 text-foreground/40">•</span>
                   <span className="text-xs">User ID: <code>{sessionUserId}</code></span>
                 </>
               ) : null}
             </div>
             <button
               onClick={signOut}
-              className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+              className="rounded-xl border border-border/50 bg-white px-4 py-2 text-sm"
             >
               Abmelden
             </button>
           </div>
-          <p className="mt-3 text-sm text-black/70">
+          <p className="mt-3 text-sm text-muted-foreground">
             ✅ Supabase ist verbunden und Magic Link funktioniert.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
@@ -152,19 +152,19 @@ export default function AdminPage() {
             </a>
             <a
               href="/admin/suggestions"
-              className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+              className="rounded-xl border border-border/50 bg-white px-4 py-2 text-sm"
             >
               Vorschläge
             </a>
             <a
               href="/admin/reports"
-              className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+              className="rounded-xl border border-border/50 bg-white px-4 py-2 text-sm"
             >
               Review-Meldungen
             </a>
             <a
               href="/admin/photos"
-              className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+              className="rounded-xl border border-border/50 bg-white px-4 py-2 text-sm"
             >
               Bild-Meldungen
             </a>

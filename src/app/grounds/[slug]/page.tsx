@@ -152,13 +152,13 @@ export default function GroundDetailPage() {
   return (
     <div className="space-y-6">
       {loading ? (
-        <div className="text-sm text-black/70">Lade…</div>
+        <div className="text-sm text-muted-foreground">Lade…</div>
       ) : error ? (
         <div className="text-sm text-red-700">{error}</div>
       ) : !ground ? null : (
         <>
           {heroUrl ? (
-            <div className="relative overflow-hidden rounded-3xl border border-black/10 bg-black/[0.03]">
+            <div className="relative overflow-hidden rounded-3xl border border-border/50 bg-muted/40">
               <div className="relative aspect-[16/7] w-full">
                 <Image
                   src={heroUrl}
@@ -179,7 +179,7 @@ export default function GroundDetailPage() {
                     </div>
                     <Link
                       href={`/grounds/${ground.slug}/photos`}
-                      className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-slate-900 hover:bg-white/90"
+                      className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-slate-900 hover:bg-card"
                     >
                       Alle Bilder
                     </Link>
@@ -190,7 +190,7 @@ export default function GroundDetailPage() {
           ) : null}
 
           <header className="space-y-4">
-            <div className="text-sm text-black/60">
+            <div className="text-sm text-muted-foreground">
               <Link className="hover:underline" href="/grounds">
                 Grounds
               </Link>
@@ -201,7 +201,7 @@ export default function GroundDetailPage() {
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
                 <h1 className="text-4xl font-semibold tracking-tight">{ground.name}</h1>
-                <div className="mt-2 text-black/70">
+                <div className="mt-2 text-muted-foreground">
                   {[ground.city, ground.country].filter(Boolean).join(" · ")}
                   {ground.club ? ` — ${ground.club}` : ""}
                 </div>
@@ -216,30 +216,30 @@ export default function GroundDetailPage() {
                 </Link>
                 <Link
                   href={`/grounds/${ground.slug}/photos`}
-                  className="rounded-full border border-black/10 bg-white px-5 py-2.5 text-sm font-semibold text-black hover:bg-black/[0.03]"
+                  className="rounded-full border border-border/50 bg-white px-5 py-2.5 text-sm font-semibold text-foreground hover:bg-muted/40"
                 >
                   Bilder
                 </Link>
               </div>
             </div>
 
-            <div className="grid gap-3 rounded-2xl border border-black/10 bg-white p-5 md:grid-cols-3">
+            <div className="grid gap-3 rounded-2xl border border-border/50 bg-white p-5 md:grid-cols-3">
               <div>
-                <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
                   Bewertung
                 </div>
                 <div className="mt-1 text-2xl font-semibold">
                   {avgRating ? `Ø ${avgRating.toFixed(1)}` : "—"}
-                  <span className="text-base font-medium text-black/50"> / 5</span>
+                  <span className="text-base font-medium text-muted-foreground"> / 5</span>
                 </div>
-                <div className="mt-1 text-sm text-black/60">{agg.count} Reviews</div>
+                <div className="mt-1 text-sm text-muted-foreground">{agg.count} Reviews</div>
               </div>
 
               <div className="md:col-span-2">
-                <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
                   Quick Facts
                 </div>
-                <div className="mt-2 grid gap-x-6 gap-y-2 text-sm text-black/70 md:grid-cols-2">
+                <div className="mt-2 grid gap-x-6 gap-y-2 text-sm text-muted-foreground md:grid-cols-2">
                   <div>{ground.league ? `Liga: ${ground.league}` : "Liga: —"}</div>
                   <div>
                     {ground.capacity
@@ -269,21 +269,21 @@ export default function GroundDetailPage() {
 
           <div className="grid gap-6 md:grid-cols-[1fr_320px]">
             <section className="space-y-4">
-              <div className="rounded-2xl border border-black/10 bg-white p-6">
+              <div className="rounded-2xl border border-border/50 bg-white p-6">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div className="text-sm text-black/70">
+                  <div className="text-sm text-muted-foreground">
                     {avgRating ? (
                       <span className="font-semibold">Review-Score</span>
                     ) : (
                       <span className="font-semibold">Noch keine Reviews</span>
                     )}
-                    <span className="ml-2 text-black/50">
+                    <span className="ml-2 text-muted-foreground">
                       {avgRating ? `Ø ${avgRating.toFixed(1)} / 5` : "—"} ({agg.count})
                     </span>
                   </div>
                   <Link
                     href={`/grounds/${ground.slug}/reviews`}
-                    className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-black/[0.03]"
+                    className="rounded-xl border border-border/50 bg-white px-4 py-2 text-sm font-semibold text-foreground hover:bg-muted/40"
                   >
                     Alle Reviews
                   </Link>
@@ -296,26 +296,26 @@ export default function GroundDetailPage() {
                     const pct = agg.count ? Math.round((count / agg.count) * 100) : 0;
                     return (
                       <div key={v} className="grid grid-cols-[32px_1fr_44px] items-center gap-3 text-sm">
-                        <div className="text-black/70">{v}</div>
+                        <div className="text-muted-foreground">{v}</div>
                         <div className="h-2 rounded-full bg-black/[0.06]">
                           <div className="h-2 rounded-full bg-blue-900" style={{ width: `${pct}%` }} />
                         </div>
-                        <div className="text-right text-black/60">{count}</div>
+                        <div className="text-right text-muted-foreground">{count}</div>
                       </div>
                     );
                   })}
                 </div>
 
                 {newest ? (
-                  <div className="mt-4 text-xs text-black/50">
+                  <div className="mt-4 text-xs text-muted-foreground">
                     Letztes Update: {new Date(newest.created_at).toLocaleString("de-DE")}
                   </div>
                 ) : null}
               </div>
 
-              <div className="rounded-2xl border border-black/10 bg-white p-6">
+              <div className="rounded-2xl border border-border/50 bg-white p-6">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
+                  <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
                     Reviews
                   </div>
                   <Link
@@ -327,25 +327,25 @@ export default function GroundDetailPage() {
                 </div>
 
                 {reviews.length === 0 ? (
-                  <p className="mt-3 text-sm text-black/70">Noch keine Reviews. Sei der/die Erste!</p>
+                  <p className="mt-3 text-sm text-muted-foreground">Noch keine Reviews. Sei der/die Erste!</p>
                 ) : (
                   <div className="mt-4 space-y-3">
                     {reviews.slice(0, 3).map((r) => (
                       <article
                         key={r.id}
-                        className="overflow-hidden rounded-2xl border border-black/10 bg-black/[0.02]"
+                        className="overflow-hidden rounded-2xl border border-border/50 bg-muted/30"
                       >
-                        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-black/10 bg-white/60 px-4 py-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/50 bg-white/60 px-4 py-3">
                           <div className="text-sm font-semibold">
                             {new Date(r.visit_date).toLocaleDateString("de-DE")}
                             {r.match ? ` — ${r.match}` : ""}
                           </div>
-                          <div className="text-sm text-black/70">{r.rating} / 5</div>
+                          <div className="text-sm text-muted-foreground">{r.rating} / 5</div>
                         </div>
-                        <div className="space-y-3 px-4 py-4 text-sm text-black/75">
+                        <div className="space-y-3 px-4 py-4 text-sm text-foreground/75">
                           {r.arrival ? (
                             <div>
-                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
                                 Anreise
                               </div>
                               <div className="mt-1 whitespace-pre-line">{r.arrival}</div>
@@ -353,7 +353,7 @@ export default function GroundDetailPage() {
                           ) : null}
                           {r.ticketing ? (
                             <div>
-                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
                                 Ticketkauf
                               </div>
                               <div className="mt-1 whitespace-pre-line">{r.ticketing}</div>
@@ -361,7 +361,7 @@ export default function GroundDetailPage() {
                           ) : null}
                           {r.payments ? (
                             <div>
-                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
                                 Zahlung
                               </div>
                               <div className="mt-1 whitespace-pre-line">{r.payments}</div>
@@ -369,7 +369,7 @@ export default function GroundDetailPage() {
                           ) : null}
                           {r.food_drink ? (
                             <div>
-                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
                                 Bier & Essen
                               </div>
                               <div className="mt-1 whitespace-pre-line">{r.food_drink}</div>
@@ -377,7 +377,7 @@ export default function GroundDetailPage() {
                           ) : null}
                           {r.prices ? (
                             <div>
-                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
                                 Preise
                               </div>
                               <div className="mt-1 whitespace-pre-line">{r.prices}</div>
@@ -385,7 +385,7 @@ export default function GroundDetailPage() {
                           ) : null}
                           {r.atmosphere ? (
                             <div>
-                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
                                 Atmosphäre
                               </div>
                               <div className="mt-1 whitespace-pre-line">{r.atmosphere}</div>
@@ -393,7 +393,7 @@ export default function GroundDetailPage() {
                           ) : null}
                           {r.condition ? (
                             <div>
-                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
                                 Stadionzustand
                               </div>
                               <div className="mt-1 whitespace-pre-line">{r.condition}</div>
@@ -401,7 +401,7 @@ export default function GroundDetailPage() {
                           ) : null}
                           {r.safety ? (
                             <div>
-                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
                                 Sicherheit
                               </div>
                               <div className="mt-1 whitespace-pre-line">{r.safety}</div>
@@ -409,7 +409,7 @@ export default function GroundDetailPage() {
                           ) : null}
                           {r.tips ? (
                             <div>
-                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                              <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
                                 Tipps
                               </div>
                               <div className="mt-1 whitespace-pre-line">{r.tips}</div>
@@ -424,15 +424,15 @@ export default function GroundDetailPage() {
             </section>
 
             <aside className="space-y-4">
-              <div className="rounded-2xl border border-black/10 bg-white p-6">
-                <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
+              <div className="rounded-2xl border border-border/50 bg-white p-6">
+                <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
                   Praktisch
                 </div>
 
-                <div className="mt-3 space-y-3 text-sm text-black/70">
+                <div className="mt-3 space-y-3 text-sm text-muted-foreground">
                   {ground.address ? (
                     <div>
-                      <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                      <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
                         Adresse
                       </div>
                       <div className="mt-1">{ground.address}</div>
@@ -441,7 +441,7 @@ export default function GroundDetailPage() {
 
                   {ground.transit_notes ? (
                     <div>
-                      <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45">
+                      <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
                         Anreise-Notizen
                       </div>
                       <div className="mt-1">{ground.transit_notes}</div>
@@ -453,7 +453,7 @@ export default function GroundDetailPage() {
                       </Link>
                     </div>
                   ) : (
-                    <div className="text-sm text-black/60">
+                    <div className="text-sm text-muted-foreground">
                       Noch keine Anreise-Notizen. Schreib ein Review und hilf der Community.
                     </div>
                   )}
@@ -467,7 +467,7 @@ export default function GroundDetailPage() {
                     </Link>
                     <Link
                       href={`/grounds/${ground.slug}/photos`}
-                      className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-black/[0.03]"
+                      className="rounded-xl border border-border/50 bg-white px-4 py-2 text-sm font-semibold text-foreground hover:bg-muted/40"
                     >
                       Bilder ansehen
                     </Link>

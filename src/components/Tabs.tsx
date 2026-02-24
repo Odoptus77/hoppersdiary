@@ -12,7 +12,7 @@ export type TabItem = {
 export function Tabs({ items }: { items: TabItem[] }) {
   return (
     <div className="-mx-4 overflow-x-auto px-4">
-      <div className="inline-flex min-w-full gap-2 border-b border-black/10 pb-2">
+      <div className="inline-flex min-w-full gap-2 border-b border-border/50 pb-2">
         {items.map((t) => (
           <Link
             key={t.key}
@@ -20,7 +20,7 @@ export function Tabs({ items }: { items: TabItem[] }) {
             className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition ${
               t.active
                 ? "bg-blue-900 text-white"
-                : "border border-black/10 bg-white text-black hover:bg-black/[0.03]"
+                : "border border-border/50 bg-white text-foreground hover:bg-muted/40"
             }`}
           >
             {t.label}

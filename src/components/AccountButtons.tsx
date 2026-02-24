@@ -73,7 +73,7 @@ export function AccountButtons() {
         <div className="flex items-center gap-2">
           <Link
             href="/me"
-            className="group flex items-center gap-2 rounded-xl border border-transparent bg-black/[0.02] px-2 py-1.5 transition hover:border-black/5 hover:bg-white hover:shadow-sm dark:bg-white/[0.02] dark:hover:border-white/10 dark:hover:bg-white/5"
+            className="group flex items-center gap-2 rounded-xl border border-transparent bg-muted/30 px-2 py-1.5 transition hover:border-black/5 hover:bg-white hover:shadow-sm dark:bg-white/[0.02] dark:hover:border-white/10 dark:hover:bg-white/5"
           >
             <div className="relative h-7 w-7 overflow-hidden rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 ring-2 ring-white dark:ring-white/20">
               {profile?.avatarUrl ? (

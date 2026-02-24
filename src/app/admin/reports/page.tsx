@@ -85,32 +85,32 @@ export default function AdminReportsPage() {
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <p className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">Admin</p>
+        <p className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">Admin</p>
         <h1 className="text-3xl font-semibold">Meldungen</h1>
-        <p className="text-black/70">Offene Meldungen prüfen und Reviews ausblenden.</p>
+        <p className="text-muted-foreground">Offene Meldungen prüfen und Reviews ausblenden.</p>
       </header>
 
       {loading ? (
-        <div className="text-sm text-black/70">Lade…</div>
+        <div className="text-sm text-muted-foreground">Lade…</div>
       ) : error ? (
         <div className="text-sm text-red-700">{error}</div>
       ) : items.length === 0 ? (
-        <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-black/70">
+        <div className="rounded-2xl border border-border/50 bg-white p-6 text-sm text-muted-foreground">
           Keine Meldungen.
         </div>
       ) : (
         <div className="space-y-3">
           {items.map((r) => (
-            <div key={r.id} className="rounded-2xl border border-black/10 bg-white p-6">
+            <div key={r.id} className="rounded-2xl border border-border/50 bg-white p-6">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <div className="text-sm text-black/60">
+                  <div className="text-sm text-muted-foreground">
                     {new Date(r.created_at).toLocaleString("de-DE")} · Status: {r.status}
                   </div>
                   <div className="mt-1 text-lg font-semibold">{r.reason}</div>
-                  {r.note ? <div className="mt-2 text-sm text-black/70">{r.note}</div> : null}
+                  {r.note ? <div className="mt-2 text-sm text-muted-foreground">{r.note}</div> : null}
 
-                  <div className="mt-3 text-sm text-black/70">
+                  <div className="mt-3 text-sm text-muted-foreground">
                     Review: {r.review ? `${r.review.rating}/5` : "—"}
                     {r.review?.match ? ` · ${r.review.match}` : ""}
                     {r.review?.visit_date ? ` · ${new Date(r.review.visit_date).toLocaleDateString("de-DE")}` : ""}
@@ -121,7 +121,7 @@ export default function AdminReportsPage() {
                     </div>
                   ) : null}
                   {r.review ? (
-                    <div className="mt-1 text-xs text-black/50">
+                    <div className="mt-1 text-xs text-muted-foreground">
                       Hidden: {String(r.review.hidden)}
                     </div>
                   ) : null}
@@ -138,7 +138,7 @@ export default function AdminReportsPage() {
                   ) : null}
                   <button
                     onClick={() => closeReport(r.id)}
-                    className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+                    className="rounded-xl border border-border/50 bg-white px-4 py-2 text-sm"
                   >
                     Schließen
                   </button>
@@ -149,7 +149,7 @@ export default function AdminReportsPage() {
         </div>
       )}
 
-      <div className="text-xs text-black/50">
+      <div className="text-xs text-muted-foreground">
         Hinweis: Ausgeblendete Reviews verschwinden komplett (ohne Platzhalter).
       </div>
     </div>

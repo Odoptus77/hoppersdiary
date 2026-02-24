@@ -115,12 +115,12 @@ export default async function Home() {
     <div className="space-y-12">
       {/* HERO */}
       <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-blue-900 to-slate-900 p-8 text-white md:p-12">
-        <div className="pointer-events-none absolute -top-24 right-[-120px] h-[420px] w-[420px] rounded-full bg-white/10 blur-2xl" />
-        <div className="pointer-events-none absolute -bottom-28 left-[-140px] h-[520px] w-[520px] rounded-full bg-white/10 blur-2xl" />
+        <div className="pointer-events-none absolute -top-24 right-[-120px] h-[420px] w-[420px] rounded-full bg-muted/50 blur-2xl" />
+        <div className="pointer-events-none absolute -bottom-28 left-[-140px] h-[520px] w-[520px] rounded-full bg-muted/50 blur-2xl" />
         <div className="grid gap-10 md:grid-cols-[1.3fr_1fr] md:items-center">
           <div className="space-y-6">
             <div className="inline-flex items-center gap-2">
-              <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-white/85">
+              <span className="rounded-full bg-muted/50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-white/85">
                 Community • D-A-CH zuerst
               </span>
             </div>
@@ -136,19 +136,19 @@ export default async function Home() {
             <div className="flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/grounds"
-                className="rounded-full bg-white px-6 py-3 text-center text-sm font-semibold text-slate-900 hover:bg-white/90"
+                className="rounded-full bg-white px-6 py-3 text-center text-sm font-semibold text-slate-900 hover:bg-card"
               >
                 Grounds entdecken
               </Link>
               <Link
                 href="/reviews"
-                className="rounded-full border border-white/25 bg-white/10 px-6 py-3 text-center text-sm font-semibold text-white hover:bg-white/15"
+                className="rounded-full border border-white/25 bg-muted/50 px-6 py-3 text-center text-sm font-semibold text-white hover:bg-white/15"
               >
                 Reviews lesen
               </Link>
               <Link
                 href="/suggest"
-                className="rounded-full border border-white/25 bg-white/10 px-6 py-3 text-center text-sm font-semibold text-white hover:bg-white/15"
+                className="rounded-full border border-white/25 bg-muted/50 px-6 py-3 text-center text-sm font-semibold text-white hover:bg-white/15"
               >
                 Ground vorschlagen
               </Link>

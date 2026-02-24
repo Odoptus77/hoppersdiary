@@ -188,12 +188,12 @@ export default function GroundsPage() {
 
                       <div className="absolute left-4 top-4 flex flex-wrap gap-2">
                         {g.league ? (
-                          <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-foreground">
+                          <span className="rounded-full bg-card px-3 py-1 text-xs font-semibold text-foreground">
                             {g.league}
                           </span>
                         ) : null}
                         {g.capacity ? (
-                          <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-foreground">
+                          <span className="rounded-full bg-card px-3 py-1 text-xs font-semibold text-foreground">
                             {g.capacity.toLocaleString("de-DE")}
                           </span>
                         ) : null}

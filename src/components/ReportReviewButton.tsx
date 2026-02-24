@@ -70,36 +70,36 @@ export function ReportReviewButton({ reviewId }: { reviewId: string }) {
           }
           setOpen(true);
         }}
-        className="text-xs text-black/50 hover:text-black/80"
+        className="text-xs text-muted-foreground hover:text-foreground/80"
       >
         Melden
       </button>
 
       {open ? (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-2xl border border-black/10 bg-white p-6">
+          <div className="w-full max-w-lg rounded-2xl border border-border/50 bg-white p-6">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/55">
+                <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
                   Moderation
                 </div>
                 <div className="mt-1 text-xl font-semibold">Review melden</div>
               </div>
               <button
                 onClick={() => setOpen(false)}
-                className="rounded-xl border border-black/10 bg-white px-3 py-1 text-sm"
+                className="rounded-xl border border-border/50 bg-white px-3 py-1 text-sm"
               >
                 Schließen
               </button>
             </div>
 
             <div className="mt-4 grid gap-3">
-              <label className="grid gap-2 text-sm text-black/70">
+              <label className="grid gap-2 text-sm text-muted-foreground">
                 Grund
                 <select
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
-                  className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                  className="rounded-xl border border-border/50 bg-white px-4 py-2"
                 >
                   {reasons.map((r) => (
                     <option key={r} value={r}>
@@ -109,13 +109,13 @@ export function ReportReviewButton({ reviewId }: { reviewId: string }) {
                 </select>
               </label>
 
-              <label className="grid gap-2 text-sm text-black/70">
+              <label className="grid gap-2 text-sm text-muted-foreground">
                 Kommentar (optional)
                 <textarea
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   rows={4}
-                  className="rounded-xl border border-black/10 bg-white px-4 py-2"
+                  className="rounded-xl border border-border/50 bg-white px-4 py-2"
                   placeholder="Was genau ist das Problem?"
                 />
               </label>
@@ -123,7 +123,7 @@ export function ReportReviewButton({ reviewId }: { reviewId: string }) {
               <div className="flex justify-end gap-2 pt-2">
                 <button
                   onClick={() => setOpen(false)}
-                  className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+                  className="rounded-xl border border-border/50 bg-white px-4 py-2 text-sm"
                 >
                   Abbrechen
                 </button>
@@ -148,7 +148,7 @@ export function ReportReviewButton({ reviewId }: { reviewId: string }) {
                 </p>
               ) : null}
 
-              <p className="text-xs text-black/50">
+              <p className="text-xs text-muted-foreground">
                 Hinweis: Ausgeblendete Reviews verschwinden komplett (ohne Platzhalter).
               </p>
             </div>
