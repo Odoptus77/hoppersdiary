@@ -117,7 +117,7 @@ export default async function Home() {
       <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-blue-900 to-slate-900 p-8 text-white md:p-12">
         <div className="pointer-events-none absolute -top-24 right-[-120px] h-[420px] w-[420px] rounded-full bg-muted/50 blur-2xl" />
         <div className="pointer-events-none absolute -bottom-28 left-[-140px] h-[520px] w-[520px] rounded-full bg-muted/50 blur-2xl" />
-        <div className="grid gap-10 md:grid-cols-[1.3fr_1fr] md:items-center">
+        <div className="grid gap-10 md:items-center">
           <div className="space-y-6">
             <div className="inline-flex items-center gap-2">
               <span className="rounded-full bg-muted/50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-white/85">
@@ -174,34 +174,6 @@ export default async function Home() {
               <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold text-white/85">
                 Fotos
               </span>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-2xl border border-white/15 bg-white/5 p-5">
-                <div className="text-2xl font-semibold tracking-tight">
-                  {groundsCount !== null ? groundsCount.toLocaleString("de-DE") : "—"}
-                </div>
-                <div className="mt-1 text-sm text-white/75">veröffentlichte Grounds</div>
-              </div>
-              <div className="rounded-2xl border border-white/15 bg-white/5 p-5">
-                <div className="text-2xl font-semibold tracking-tight">
-                  {reviewsCount !== null ? reviewsCount.toLocaleString("de-DE") : "—"}
-                </div>
-                <div className="mt-1 text-sm text-white/75">Reviews</div>
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-white/15 bg-white/5 p-5">
-              <div className="text-xs font-medium uppercase tracking-[0.28em] text-white/70">
-                Worum es geht
-              </div>
-              <ul className="mt-3 space-y-2 text-sm text-white/85">
-                <li>• Schnell sehen, ob Anreise & Tickets easy sind</li>
-                <li>• Preise & Zahlung auf einen Blick</li>
-                <li>• Echte Erfahrungswerte – kein Marketingtext</li>
-              </ul>
             </div>
           </div>
         </div>
