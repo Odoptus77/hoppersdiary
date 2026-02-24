@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-// Map view removed for now
 import { useEffect, useMemo, useState } from "react";
 
 type Ground = {
@@ -52,7 +51,6 @@ export default function GroundsPage() {
         .select("id,name,club,city,country,league,capacity,slug,lat,lng")
         .order("name", { ascending: true });
 
-      // Only published grounds are visible to guests anyway (RLS).
       if (country) query = query.eq("country", country);
       if (q.trim()) query = query.ilike("name", `%${q.trim()}%`);
 
@@ -83,7 +81,7 @@ export default function GroundsPage() {
           const rows = ((p as PhotoRow[]) ?? []).slice();
           const map: Record<string, string> = {};
           for (const row of rows) {
-            if (map[row.ground_id]) continue; // keep newest
+            if (map[row.ground_id]) continue;
             const { data: u } = supabase.storage
               .from(row.storage_bucket)
               .getPublicUrl(row.storage_path);
@@ -94,7 +92,6 @@ export default function GroundsPage() {
           setThumbs({});
         }
       } catch {
-        // ignore thumbnail errors (non-critical)
         setThumbs({});
       }
 
@@ -108,32 +105,31 @@ export default function GroundsPage() {
     <div className="space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div className="space-y-2">
-          <h1 className="text-3xl font-semibold tracking-tight">Grounds</h1>
-          <p className="text-sm text-black/65">
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground">Grounds</h1>
+          <p className="text-sm text-muted-foreground">
             Entdecke Stadien in D-A-CH. Filter nach Name und Land – und schau dir echte Tipps aus
             Besuchen an.
           </p>
         </div>
-        <div className="text-sm text-black/55">{items.length} Grounds</div>
+        <div className="text-sm text-muted-foreground">{items.length} Grounds</div>
       </header>
 
       <div className="grid gap-6">
-        {/* Left: list */}
         <div className="space-y-4">
-          <div className="flex flex-col gap-3 rounded-2xl border border-black/10 bg-white p-4 md:flex-row md:items-center">
-            <div className="text-xs font-medium uppercase tracking-[0.28em] text-black/45 md:mr-2">
+          <div className="flex flex-col gap-3 rounded-2xl border border-border/50 bg-card p-4 md:flex-row md:items-center">
+            <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground md:mr-2">
               Filter
             </div>
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Suche nach Stadionname…"
-              className="w-full rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+              className="w-full rounded-xl border border-border/50 bg-background px-4 py-2 text-sm text-foreground placeholder:text-muted-foreground"
             />
             <select
               value={country}
               onChange={(e) => setCountry(e.target.value)}
-              className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm"
+              className="rounded-xl border border-border/50 bg-background px-4 py-2 text-sm text-foreground"
             >
               <option value="DE">Deutschland</option>
               <option value="AT">Österreich</option>
@@ -141,18 +137,18 @@ export default function GroundsPage() {
             </select>
             <Link
               href="/suggest"
-              className="rounded-xl bg-blue-900 px-4 py-2 text-center text-sm font-semibold text-white"
+              className="rounded-xl bg-primary px-4 py-2 text-center text-sm font-semibold text-primary-foreground hover:bg-primary/90"
             >
               + Vorschlagen
             </Link>
           </div>
 
           {loading ? (
-            <div className="text-sm text-black/70">Lade…</div>
+            <div className="text-sm text-muted-foreground">Lade…</div>
           ) : error ? (
-            <div className="text-sm text-red-700">{error}</div>
+            <div className="text-sm text-destructive">{error}</div>
           ) : items.length === 0 ? (
-            <div className="rounded-2xl border border-black/10 bg-white p-6 text-sm text-black/70">
+            <div className="rounded-2xl border border-border/50 bg-card p-6 text-sm text-muted-foreground">
               Noch keine veröffentlichten Grounds in dieser Auswahl.
             </div>
           ) : (
@@ -166,9 +162,9 @@ export default function GroundsPage() {
                   <Link
                     key={g.id}
                     href={`/grounds/${g.slug}`}
-                    className="group overflow-hidden rounded-3xl border border-black/10 bg-white transition hover:bg-black/[0.02]"
+                    className="group overflow-hidden rounded-3xl border border-border/50 bg-card transition hover:bg-muted"
                   >
-                    <div className="relative aspect-[16/10] bg-black/[0.03]">
+                    <div className="relative aspect-[16/10] bg-muted">
                       {thumb ? (
                         <Image
                           src={thumb}
@@ -192,12 +188,12 @@ export default function GroundsPage() {
 
                       <div className="absolute left-4 top-4 flex flex-wrap gap-2">
                         {g.league ? (
-                          <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900">
+                          <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-foreground">
                             {g.league}
                           </span>
                         ) : null}
                         {g.capacity ? (
-                          <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900">
+                          <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-foreground">
                             {g.capacity.toLocaleString("de-DE")}
                           </span>
                         ) : null}
@@ -206,11 +202,11 @@ export default function GroundsPage() {
 
                     <div className="p-5">
                       {!thumb ? (
-                        <div className="text-sm text-black/55">
+                        <div className="text-sm text-muted-foreground">
                           Noch kein Bild – füge eins über ein Review hinzu.
                         </div>
                       ) : (
-                        <div className="text-sm text-black/55">Öffnen</div>
+                        <div className="text-sm text-muted-foreground">Öffnen</div>
                       )}
                     </div>
                   </Link>
@@ -219,8 +215,6 @@ export default function GroundsPage() {
             </div>
           )}
         </div>
-
-        {/* Map view removed (Mapbox debugging later) */}
       </div>
     </div>
   );
