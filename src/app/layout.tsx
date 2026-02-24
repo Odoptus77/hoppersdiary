@@ -53,7 +53,7 @@ export default function RootLayout({
     <html lang="de" suppressHydrationWarning>
       <body className={`${inter.className} antialiased`}>
         <ThemeProvider>
-          <div className="min-h-dvh bg-gradient-to-br from-white via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 text-foreground transition-colors duration-300">
+          <div className="min-h-dvh bg-background text-foreground transition-colors duration-300">
             <SiteHeader />
             <main className="mx-auto max-w-6xl px-4 py-6 pb-28 md:py-10 md:pb-12">
               <div className="animate-fade-in">
