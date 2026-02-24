@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 type LatestReview = {
@@ -10,105 +9,22 @@ type LatestReview = {
   ground: { slug: string; name: string; city: string | null; country: string } | null;
 };
 
-type LatestPhoto = {
-  id: string;
-  storage_bucket: string;
-  storage_path: string;
-  created_at: string;
-  ground: { slug: string; name: string } | null;
-};
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-2xl border border-border/50 bg-card p-5">
-      <div className="text-2xl font-semibold tracking-tight text-foreground">{value}</div>
-      <div className="mt-1 text-sm text-muted-foreground">{label}</div>
-    </div>
-  );
-}
-
 export default async function Home() {
   const supabase = createSupabaseServerClient();
 
   let latestReviews: LatestReview[] = [];
-  let latestPhotos: (LatestPhoto & { url: string })[] = [];
-  let topGrounds: { id: string; name: string; slug: string; city: string | null; country: string; count: number }[] = [];
-  let groundsCount: number | null = null;
-  let reviewsCount: number | null = null;
 
   if (supabase) {
-    const [gCount, rCount, rLatest, pLatest, rAll] = await Promise.all([
-      supabase.from("grounds").select("id", { count: "exact", head: true }).eq("published", true),
-      supabase.from("reviews").select("id", { count: "exact", head: true }).eq("hidden", false),
-      supabase
-        .from("reviews")
-        .select(
-          "id,visit_date,match,rating, ground:grounds(slug,name,city,country)"
-        )
-        .eq("hidden", false)
-        .order("created_at", { ascending: false })
-        .limit(6),
-      supabase
-        .from("photos")
-        .select(
-          "id,storage_bucket,storage_path,created_at, ground:grounds(slug,name)"
-        )
-        .eq("hidden", false)
-        .order("created_at", { ascending: false })
-        .limit(8),
-      supabase
-        .from("reviews")
-        .select("ground_id,created_at, ground:grounds(id,slug,name,city,country)")
-        .eq("hidden", false)
-        .order("created_at", { ascending: false })
-        .limit(500),
-    ]);
+    const { data } = await supabase
+      .from("reviews")
+      .select(
+        "id,visit_date,match,rating, ground:grounds(slug,name,city,country)"
+      )
+      .eq("hidden", false)
+      .order("created_at", { ascending: false })
+      .limit(6);
 
-    groundsCount = gCount.count ?? null;
-    reviewsCount = rCount.count ?? null;
-
-    latestReviews = (rLatest.data as any) ?? [];
-
-    const rows = ((pLatest.data as any[]) ?? []) as LatestPhoto[];
-    latestPhotos = rows.map((row) => {
-      const { data } = supabase.storage.from(row.storage_bucket).getPublicUrl(row.storage_path);
-      return { ...(row as any), url: data.publicUrl };
-    });
-
-    const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-    const all = ((rAll.data as any[]) ?? []).filter((x) => {
-      const ts = new Date(x.created_at).getTime();
-      return Number.isFinite(ts) && ts >= weekAgo;
-    });
-
-    const byGround = new Map<
-      string,
-      { id: string; name: string; slug: string; city: string | null; country: string; count: number }
-    >();
-
-    for (const row of all) {
-      const g = row.ground;
-      const gid = row.ground_id as string | undefined;
-      if (!gid || !g) continue;
-
-      const curr = byGround.get(gid);
-      if (!curr) {
-        byGround.set(gid, {
-          id: g.id,
-          name: g.name,
-          slug: g.slug,
-          city: g.city ?? null,
-          country: g.country,
-          count: 1,
-        });
-      } else {
-        curr.count += 1;
-      }
-    }
-
-    topGrounds = Array.from(byGround.values())
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 6);
+    latestReviews = (data as any) ?? [];
   }
 
   return (
@@ -179,53 +95,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* TOP GROUNDS THIS WEEK */}
-      <section className="space-y-4 rounded-3xl border border-border/50 bg-card p-8 md:p-10">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
-              Community
-            </div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">Top Grounds diese Woche</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Welche Stadien wurden zuletzt am meisten reviewed (letzte 7 Tage).
-            </p>
-          </div>
-          <Link href="/grounds" className="text-sm font-semibold text-primary hover:underline">
-            Alle Grounds
-          </Link>
-        </div>
-
-        {topGrounds.length === 0 ? (
-          <div className="rounded-2xl border border-border/50 bg-muted/30 p-6 text-sm text-muted-foreground">
-            Noch nicht genug Daten für diese Woche.
-          </div>
-        ) : (
-          <div className="grid gap-3 md:grid-cols-2">
-            {topGrounds.map((g) => (
-              <Link
-                key={g.id}
-                href={`/grounds/${g.slug}`}
-                className="rounded-2xl border border-border/50 bg-muted/30 p-6 transition hover:bg-muted"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <div className="text-lg font-semibold text-foreground">{g.name}</div>
-                    <div className="mt-1 text-sm text-muted-foreground">
-                      {[g.city, g.country].filter(Boolean).join(" · ")}
-                    </div>
-                  </div>
-                  <div className="rounded-full bg-primary px-3 py-1 text-sm font-semibold text-primary-foreground">
-                    {g.count}
-                  </div>
-                </div>
-                <div className="mt-2 text-xs text-muted-foreground">Reviews in den letzten 7 Tagen</div>
-              </Link>
-            ))}
-          </div>
-        )}
-      </section>
-
       {/* LATEST REVIEWS */}
       <section className="space-y-4 rounded-3xl border border-border/50 bg-muted/20 p-8 md:p-10">
         <div className="flex flex-wrap items-end justify-between gap-3">
@@ -273,79 +142,6 @@ export default async function Home() {
             ))}
           </div>
         )}
-      </section>
-
-      {/* LATEST PHOTOS */}
-      <section className="space-y-4 rounded-3xl border border-border/50 bg-card p-8 md:p-10">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <div className="text-xs font-medium uppercase tracking-[0.28em] text-muted-foreground">
-              Galerie
-            </div>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">Neueste Bilder</h2>
-          </div>
-          <Link href="/grounds" className="text-sm font-semibold text-primary hover:underline">
-            Zu den Grounds
-          </Link>
-        </div>
-
-        {latestPhotos.length === 0 ? (
-          <div className="rounded-2xl border border-border/50 bg-muted/30 p-6 text-sm text-muted-foreground">
-            Noch keine Bilder.
-          </div>
-        ) : (
-          <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
-            {latestPhotos.map((p) => (
-              <Link
-                key={p.id}
-                href={p.ground ? `/grounds/${p.ground.slug}/photos` : "/grounds"}
-                className="group overflow-hidden rounded-2xl border border-border/50 bg-muted/30"
-              >
-                <div className="relative aspect-[4/3]">
-                  <Image
-                    src={p.url}
-                    alt={p.ground?.name ?? "Ground photo"}
-                    fill
-                    className="object-cover transition group-hover:scale-[1.02]"
-                    sizes="(max-width: 768px) 50vw, 25vw"
-                  />
-                </div>
-                <div className="p-3">
-                  <div className="text-sm font-semibold truncate text-foreground">{p.ground?.name ?? "(Ground)"}</div>
-                  <div className="mt-1 text-xs text-muted-foreground">
-                    {new Date(p.created_at).toLocaleDateString("de-DE")}
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* FINAL CTA */}
-      <section className="rounded-3xl border border-border/50 bg-card p-8 md:p-10">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <div className="text-sm font-semibold text-foreground">Neu hier?</div>
-            <div className="mt-1 text-sm text-muted-foreground">
-              Login per Magic Link – keine Registrierung, kein Passwort.
-            </div>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href="/login"
-              className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
-            >
-              Login
-            </Link>
-            <Link
-              href="/grounds"
-              className="rounded-full border border-border/50 bg-muted/30 px-6 py-3 text-sm font-semibold text-foreground hover:bg-muted"
-            >
-              Grounds ansehen
-            </Link>
-          </div>
-        </div>
       </section>
     </div>
   );
