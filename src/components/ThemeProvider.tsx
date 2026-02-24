@@ -51,14 +51,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setTheme(resolvedTheme === "light" ? "dark" : "light");
   };
 
-  // Prevent flash of wrong theme
-  if (!mounted) {
-    return <div style={{ visibility: "hidden" }}>{children}</div>;
-  }
-
+  // Always provide context, even before mount
   return (
     <ThemeContext.Provider value={{ theme, resolvedTheme, setTheme, toggleTheme }}>
-      {children}
+      <div className={mounted ? "" : "opacity-0"}>
+        {children}
+      </div>
     </ThemeContext.Provider>
   );
 }
@@ -66,6 +64,15 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 export function useTheme() {
   const context = useContext(ThemeContext);
   if (context === undefined) {
+    // During SSR/hydration mismatch, return a default instead of throwing
+    if (typeof window === "undefined") {
+      return {
+        theme: "system" as const,
+        resolvedTheme: "light" as const,
+        setTheme: () => {},
+        toggleTheme: () => {},
+      };
+    }
     throw new Error("useTheme must be used within a ThemeProvider");
   }
   return context;
